@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/theme//colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 
 class Login extends StatefulWidget {
-  const Login({
-    super.key,
-  });
-
-
+  const Login({super.key,});
   @override
   State<Login> createState() => _LoginState();
 }
@@ -38,69 +34,12 @@ class _LoginState extends State<Login> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 35,),
-                  Container(
-                    width: 150,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.AccentBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-
-                        ),
-                      ),
-                    child: Text(
-                      'Login',
-                      style: TextStyle(
-                        color: AppColor.FontSecondary,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 17.5
-                      ),
-                      
-                    ),
-                    ),
-                  ),
+                  const SizedBox(height: 35,),
+                  LoginButton(),
                   SizedBox(
                     height: 10,
                   ),
-                  Container( 
-                    width: 150,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _remeberme_state = !_remeberme_state;
-                            });
-                          },
-                          child: Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColor.LightBorder, width: 1),
-                              borderRadius: BorderRadius.circular(AppSizes.BorderRadiusSmall),
-                              color: _remeberme_state ? AppColor.AccentBlue : AppColor.backgroundLight
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(2.5),
-                              child: _remeberme_state ? SvgPicture.asset('assets/icons/checkbox.svg') : Text(''),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10,),
-                        Text(
-                          'remember me',
-                          style: TextStyle(
-                            color: AppColor.Font,
-                            fontWeight: FontWeight.w300,
-                            fontSize: 15,
-                          ),
-                        )
-                      ],
-                    ),
-                  )             
+                  RememberMe()             
                 ],
               )
             ],
@@ -117,12 +56,12 @@ class _LoginState extends State<Login> {
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           border: Border.all(color: AppColor.LightBorder, width: 2),
-          borderRadius: BorderRadius.circular(5)
+          borderRadius: BorderRadius.circular(AppSizes.BorderRadiusNormal)
         ),
         child: Center(
           child: TextField(
             cursorColor: AppColor.Font,
-            cursorRadius: Radius.circular(5),
+            cursorRadius: Radius.circular(AppSizes.BorderRadiusNormal),
             style: TextStyle(
               color: AppColor.Font
             ),
@@ -152,18 +91,18 @@ class _LoginState extends State<Login> {
       child: Container(
         height: 45,
         clipBehavior: Clip.hardEdge,
+        constraints: BoxConstraints(
+          minHeight: 45,
+        ),
         decoration: BoxDecoration(
           border: Border.all(color: AppColor.LightBorder, width: 2),
-          borderRadius: BorderRadius.circular(5)
+          borderRadius: BorderRadius.circular(AppSizes.BorderRadiusNormal)
         ),
         child: Center(
           child: TextField(
-            // onChanged: (value) {
-            //   password = value;
-            // },
             obscureText: _obscureText_Password,
             cursorColor: AppColor.Font,
-            cursorRadius: const Radius.circular(5),
+            cursorRadius: Radius.circular(AppSizes.BorderRadiusNormal),
             style: TextStyle(
               color: AppColor.Font
             ),
@@ -206,5 +145,69 @@ class _LoginState extends State<Login> {
           ),
         ),
       );
+  }
+  Container LoginButton() {
+    return Container(
+      width: 150,
+      child: ElevatedButton(
+        onPressed: () {
+          PopUp.create(context, 1, "Info", "logged you out");
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColor.AccentBlue,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizes.BorderRadiusSmall)
+          ),
+        ),
+      child: Text(
+        'Login',
+        style: TextStyle(
+          color: AppColor.FontSecondary,
+          fontWeight: FontWeight.w400,
+          fontSize: 17.5
+        ),
+        
+      ),
+      ),
+    );
+  }
+  Container RememberMe() {
+    return Container( 
+      width: 150,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _remeberme_state = !_remeberme_state;
+              });
+            },
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColor.LightBorder, width: 1),
+                borderRadius: BorderRadius.circular(AppSizes.BorderRadiusSmall),
+                color: _remeberme_state ? AppColor.AccentBlue : AppColor.backgroundLight
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(2.5),
+                child: _remeberme_state ? SvgPicture.asset('assets/icons/checkbox.svg') : Text(''),
+              ),
+            ),
+          ),
+          SizedBox(width: 10,),
+          Text(
+            'remember me',
+            style: TextStyle(
+              color: AppColor.Font,
+              fontWeight: FontWeight.w300,
+              fontSize: 15,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
