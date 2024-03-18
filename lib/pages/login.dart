@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/theme//colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
+import 'package:hive/hive.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key,});
@@ -13,7 +14,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _obscureText_Password = true;
   bool _remeberme_state = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,15 +159,14 @@ class _LoginState extends State<Login> {
             borderRadius: BorderRadius.circular(AppSizes.BorderRadiusSmall)
           ),
         ),
-      child: Text(
-        'Login',
-        style: TextStyle(
-          color: AppColor.FontSecondary,
-          fontWeight: FontWeight.w400,
-          fontSize: 17.5
+        child: Text(
+          'Login',
+          style: TextStyle(
+            color: AppColor.FontSecondary,
+            fontWeight: FontWeight.w400,
+            fontSize: 17.5
+          ),
         ),
-        
-      ),
       ),
     );
   }
