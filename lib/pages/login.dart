@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/dataobj/hive_metadata.dart';
+import 'package:gbevplan/pages/home.dart';
 import 'package:gbevplan/theme//colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 
 class Login extends StatefulWidget {
@@ -161,12 +163,13 @@ class _LoginState extends State<Login> {
         ),
       );
   }
+
   Container LoginButton() {
     return Container(
       width: 150,
       child: ElevatedButton(
         onPressed: () {
-          PopUp.create(context, 3, "Info", "logged you out");
+          // PopUp.create(context, 3, "Info", "logged you out");
           if (_remeberme_state) {
             HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
               hivemetadata.secruecredentials.username = username_controller.text;
@@ -178,7 +181,7 @@ class _LoginState extends State<Login> {
               hivemetadata.secruecredentials.password = '';
               hiveDataBox.put('metadata', hivemetadata);
           }
-          
+          context.go('/');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.AccentBlue,
