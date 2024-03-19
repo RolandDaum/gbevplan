@@ -141,7 +141,6 @@ class _PopUpWidgetState extends State<PopUpWidget> {
               },
               child: SvgPicture.asset('assets/icons/close.svg'),
             ),)
-            
           ],
         ),
       ),

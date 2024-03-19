@@ -1,19 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gbevplan/components/popUp.dart';
+import 'package:gbevplan/dataobj/hive_metadata.dart';
 import 'package:gbevplan/theme//colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:hive/hive.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key,});
+  
   @override
-  State<Login> createState() => _LoginState();
+  State<Login> createState() {
+    return _LoginState();
+  }
 }
 
 class _LoginState extends State<Login> {
+
+  final Box<dynamic> hiveDataBox = Hive.box('data');
+
   bool _obscureText_Password = true;
   bool _remeberme_state = false;
+  TextEditingController username_controller = new TextEditingController();
+  TextEditingController password_controller = new TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Loading HIVE Data into State
+    HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
+    _remeberme_state = hivemetadata.appdata.uiinfo.rememberMe;
+    username_controller.text = hivemetadata.secruecredentials.username;
+    password_controller.text = hivemetadata.secruecredentials.password;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +57,7 @@ class _LoginState extends State<Login> {
                 children: [
                   const SizedBox(height: 35,),
                   LoginButton(),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   RememberMe()             
@@ -49,6 +70,7 @@ class _LoginState extends State<Login> {
     );
   }
 
+  // Widgets
   Padding Textinput_Username() {
     return Padding(padding: const EdgeInsets.all(10), 
       child: Container(
@@ -60,6 +82,7 @@ class _LoginState extends State<Login> {
         ),
         child: Center(
           child: TextField(
+            controller: username_controller,
             cursorColor: AppColor.Font,
             cursorRadius: Radius.circular(AppSizes.BorderRadiusNormal),
             style: TextStyle(
@@ -100,6 +123,7 @@ class _LoginState extends State<Login> {
         ),
         child: Center(
           child: TextField(
+            controller: password_controller,
             obscureText: _obscureText_Password,
             cursorColor: AppColor.Font,
             cursorRadius: Radius.circular(AppSizes.BorderRadiusNormal),
@@ -131,16 +155,7 @@ class _LoginState extends State<Login> {
                   padding: EdgeInsets.all(12.5),
                   child: SvgPicture.asset('assets/icons/eye.svg'),
                 )
-              )
-              
-              
-              // IconButton(
-              //   onPressed: () {
-              //     setState(() {
-              //       _obscureText_Password = !_obscureText_Password;
-              //     });}, 
-              //   icon: SvgPicture.asset('assets/icons/eye.svg')),
-              ),
+              )),
             ),
           ),
         ),
@@ -151,7 +166,19 @@ class _LoginState extends State<Login> {
       width: 150,
       child: ElevatedButton(
         onPressed: () {
-          PopUp.create(context, 1, "Info", "logged you out");
+          PopUp.create(context, 3, "Info", "logged you out");
+          if (_remeberme_state) {
+            HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
+              hivemetadata.secruecredentials.username = username_controller.text;
+              hivemetadata.secruecredentials.password = password_controller.text;
+              hiveDataBox.put('metadata', hivemetadata);
+          } else {
+            HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
+              hivemetadata.secruecredentials.username = '';
+              hivemetadata.secruecredentials.password = '';
+              hiveDataBox.put('metadata', hivemetadata);
+          }
+          
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.AccentBlue,
@@ -181,6 +208,9 @@ class _LoginState extends State<Login> {
               setState(() {
                 _remeberme_state = !_remeberme_state;
               });
+              HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
+              hivemetadata.appdata.uiinfo.rememberMe = _remeberme_state;
+              hiveDataBox.put('metadata', hivemetadata);
             },
             child: Container(
               width: 20,
@@ -191,12 +221,12 @@ class _LoginState extends State<Login> {
                 color: _remeberme_state ? AppColor.AccentBlue : AppColor.backgroundLight
               ),
               child: Padding(
-                padding: EdgeInsets.all(2.5),
+                padding: const EdgeInsets.all(2.5),
                 child: _remeberme_state ? SvgPicture.asset('assets/icons/checkbox.svg') : Text(''),
               ),
             ),
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           Text(
             'remember me',
             style: TextStyle(

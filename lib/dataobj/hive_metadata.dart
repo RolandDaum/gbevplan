@@ -63,32 +63,32 @@ class HIVE_AppData {
   HIVE_APIInfo apiinfo;
   HIVE_AppSettings appsettings;
 
-  HIVE_AppData(this.appinfo, this.uiinfo, this.apiinfo, this.appsettings)
+  HIVE_AppData(this.appinfo, this.uiinfo, this.apiinfo, this.appsettings);
 }
 class HIVE_AppInfo {
   String version;
   String appName;
-  HIVE_AppInfo(this.version, this.appName)
+  HIVE_AppInfo(this.version, this.appName);
 }
 class HIVE_UIInfo {
   bool rememberMe;
-  HIVE_UIInfo(this.rememberMe)
+  HIVE_UIInfo(this.rememberMe);
 }
 class HIVE_APIInfo {
   String apivalidity;
   String apiaddress;
   String lastAPICall;
-  HIVE_APIInfo(this.apivalidity, this.apiaddress, this.lastAPICall)
+  HIVE_APIInfo(this.apivalidity, this.apiaddress, this.lastAPICall);
 }
 class HIVE_AppSettings {
   bool notifications;
   bool darkmode;
-  HIVE_AppSettings(this.notifications, this.darkmode)
+  HIVE_AppSettings(this.notifications, this.darkmode);
 }
 class HIVE_SecureCredentials {
   String username;
   String password;
   String apikey;
   
-  HIVE_SecureCredentials(this.username, this.password, this.apikey)
+  HIVE_SecureCredentials(this.username, this.password, this.apikey);
 }
