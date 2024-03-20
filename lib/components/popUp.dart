@@ -79,7 +79,6 @@ class _PopUpWidgetState extends State<PopUpWidget> {
         break;
     }
 
-
     Future.delayed(Duration(milliseconds: 3500), () {
       setState(() {
         opacity = 0;
@@ -108,23 +107,30 @@ class _PopUpWidgetState extends State<PopUpWidget> {
           children: [
             Row(
               children: [ 
-                Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(iconPath),),
-                Padding(padding: EdgeInsets.all(5), child: Text(
-                  widget.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.Font,
-                  ),
-                ),),
-                
-                Padding(padding: EdgeInsets.all(10), child: Text(
-                  widget.message, 
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                    color: AppColor.Font
-                  ),
+                Padding(
+                  padding: EdgeInsets.all(10), 
+                  child: SvgPicture.asset(iconPath)
+                ),
+                Padding(
+                  padding: EdgeInsets.all(5), 
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.Font,
+                    ),
+                  )
+                ),
+                Padding(
+                  padding: EdgeInsets.all(5), 
+                  child: Text(
+                    widget.message, 
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w300,
+                      color: AppColor.Font
+                    ),
                   ),
                 ),
               ],
@@ -139,7 +145,8 @@ class _PopUpWidgetState extends State<PopUpWidget> {
                 });
               },
               child: SvgPicture.asset('assets/icons/close.svg'),
-            ),)
+              )
+            )
           ],
         ),
       ),

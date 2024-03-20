@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/dataobj/hive_metadata.dart';
@@ -39,6 +40,14 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: AppColor.transparent,
+        systemNavigationBarColor: AppColor.backgroundDark
+      )
+    );
+
     return Scaffold(
       backgroundColor: AppColor.backgroundDark,
       body: Center(
@@ -163,7 +172,6 @@ class _LoginState extends State<Login> {
         ),
       );
   }
-
   Container LoginButton() {
     return Container(
       width: 150,
@@ -181,7 +189,7 @@ class _LoginState extends State<Login> {
               hivemetadata.secruecredentials.password = '';
               hiveDataBox.put('metadata', hivemetadata);
           }
-          context.go('/');
+          context.go('/timetable');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.AccentBlue,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gbevplan/pages/home.dart';
-import 'package:gbevplan/pages/home_pages/help.dart';
-import 'package:gbevplan/pages/home_pages/news.dart';
-import 'package:gbevplan/pages/home_pages/originaltimetable.dart';
-import 'package:gbevplan/pages/home_pages/settings.dart';
-import 'package:gbevplan/pages/home_pages/timetable.dart';
+import 'package:gbevplan/pages/home_subpages/help.dart';
+import 'package:gbevplan/pages/home_subpages/news.dart';
+import 'package:gbevplan/pages/home_subpages/originaltimetable.dart';
+import 'package:gbevplan/pages/home_subpages/settings.dart';
+import 'package:gbevplan/pages/home_subpages/timetable.dart';
 import 'package:gbevplan/pages/login.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,10 +18,12 @@ final GoRouter router = GoRouter(
         return const Login();
       }
     ), 
+
     ShellRoute(
       routes: [
         GoRoute(
           path: '/timetable',
+          name: 'timetable',
           builder: (BuildContext context, GoRouterState state) {
             return TimeTable(); 
           }
@@ -51,7 +53,7 @@ final GoRouter router = GoRouter(
           }
         )
       ],
-      builder: (BuildContext context, GoRouterState state, child) {
+      builder: (BuildContext context, GoRouterState state, Widget child) {
         return Home(child: child,);
       }
     )

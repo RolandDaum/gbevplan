@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gbevplan/dataobj/hive_metadata.dart';
 import 'package:gbevplan/router.dart';
 import 'package:gbevplan/theme/colors.dart';
@@ -32,6 +33,13 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: AppColor.transparent,
+        systemNavigationBarColor: AppColor.backgroundLight
+      )
+    );
+
     return MaterialApp.router(
       theme: ThemeData(
         textSelectionTheme: TextSelectionThemeData(
