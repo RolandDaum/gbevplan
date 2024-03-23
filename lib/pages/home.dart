@@ -18,8 +18,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  double icon_padding = 10;
+
+  double icon_padding = 11;
   String current_route = '';
+
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: AppColor.transparent,

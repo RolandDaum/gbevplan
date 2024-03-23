@@ -26,7 +26,7 @@ final GoRouter router = GoRouter(
           name: 'timetable',
           builder: (BuildContext context, GoRouterState state) {
             return TimeTable(); 
-          }
+          } 
         ),
         GoRoute(
           path: '/news',

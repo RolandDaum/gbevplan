@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gbevplan/pages/home.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 
@@ -19,17 +20,17 @@ class PopUp {
     _isShowing = true;
     OverlayEntry? overlayEntry;
     overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
+      builder: (BuildContext context) => Positioned(
         left: 50,
         right: 50,
-        bottom: 50,
+        bottom: 25,
         child: PopUpWidget(importants: importants, title: Title, message: Message, onClose: () {
           overlayEntry?.remove();
           _isShowing = false;
         }),
       ),
     );
-    Overlay.of(context).insert(overlayEntry);
+    Overlay.of(context, rootOverlay: true).insert(overlayEntry);
   }    
 }
 

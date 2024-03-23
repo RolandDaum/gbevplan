@@ -86,6 +86,7 @@ class _LoginState extends State<Login> {
     return Padding(padding: const EdgeInsets.all(10), 
       child: Container(
         height: 45,
+        width: 225,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           border: Border.all(color: AppColor.LightBorder, width: 2),
@@ -124,6 +125,7 @@ class _LoginState extends State<Login> {
       padding: const EdgeInsets.all(10), 
       child: Container(
         height: 45,
+        width: 225,
         clipBehavior: Clip.hardEdge,
         constraints: BoxConstraints(
           minHeight: 45,
