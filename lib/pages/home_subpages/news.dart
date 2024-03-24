@@ -7,7 +7,7 @@ class News extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-        child: Text('N E W S'),
+        child: Text('N E W S', style: TextStyle(color: AppColor.Font),),
       ),
     );
   }

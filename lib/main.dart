@@ -11,7 +11,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(HIVE_MetaDataAdapter());
   Box<dynamic> data = await Hive.openBox('data');
-  if (data.isEmpty) {
+  if (data.get('metadata') == null) {
     await initMetadata(data);
   }
   runApp(const MyApp());
@@ -33,12 +33,17 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: AppColor.transparent,
-        systemNavigationBarColor: AppColor.backgroundLight
+        systemNavigationBarColor: AppColor.transparent,
+        systemStatusBarContrastEnforced: false,
       )
     );
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.bottom]);
+
 
     return MaterialApp.router(
       theme: ThemeData(

@@ -89,6 +89,10 @@ flutter:
     - assets/icons/calender.svg
     - assets/icons/arrowdown.svg
     - assets/icons/hyperlink.svg
+    - assets/icons/arrowleftfilled.svg
+    - assets/icons/arrowrightfilled.svg
+    - assets/icons/editcalender.svg
+    - assets/icons/trashcanred.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -40,14 +40,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: AppColor.transparent,
-        systemNavigationBarColor: AppColor.backgroundDark
-      )
-    );
-
     return Scaffold(
       backgroundColor: AppColor.backgroundDark,
       body: Center(

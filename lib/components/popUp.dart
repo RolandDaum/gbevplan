@@ -12,11 +12,12 @@ class PopUp {
    * String Title - Title of the popUp
    * String Messag - Message of the popUp
    */
-  static void create(BuildContext context, int importants, String Title, String Message) {
+  static void create(BuildContext context, int importants, String Title, String Message) async {
     if (_isShowing) {
       print('There is already a popup');
       return;
     }
+
     _isShowing = true;
     OverlayEntry? overlayEntry;
     overlayEntry = OverlayEntry(

@@ -36,13 +36,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: AppColor.transparent,
-        systemNavigationBarColor: AppColor.backgroundLight
-      )
-    );
-
     return Scaffold(
       backgroundColor: AppColor.backgroundDark,
       body: Column(

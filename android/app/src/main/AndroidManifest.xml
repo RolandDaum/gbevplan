@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/> <!-- Else Im getting a ERR_CHACHE_MISS in webview -->
     <application
         android:label="gbevplan"
         android:name="${applicationName}"

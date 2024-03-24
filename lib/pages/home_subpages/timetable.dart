@@ -15,13 +15,13 @@ class TimeTable extends StatefulWidget {
   State<TimeTable> createState() => _TimeTableState();
 }
 
-class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMixin  {
+class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMixin {
 
   // Refresh Bar
   late AnimationController _controllerLoadingBar;
-  bool _dropdownmenuIsShowing = false;
 
   // Date Drop Down
+  bool _dropdownmenuIsShowing = false;
   List<String> availableDates = ['23/03/2024', '24/03/2024', '25/03/2024'];
   int selectedDate = 0;
 
@@ -44,7 +44,9 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
 
   void refreshData() {
     _controllerLoadingBar.value = 0;
-    _controllerLoadingBar.animateTo(1);
+    _controllerLoadingBar.animateTo(1).then((value) {
+      PopUp.create(context, 1, 'Refresh', 'successfull refresh');
+    });
   }
 
   @override
@@ -72,7 +74,8 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
     // M A I N  P A G E
     return GestureDetector(
       // Page Refrsh Detector
-      behavior: HitTestBehavior.translucent,
+      // behavior: HitTestBehavior.translucent,
+
       onVerticalDragStart: (details) {
         _startY = details.globalPosition.dy;
       },
@@ -84,7 +87,7 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
         int? primvelocity = details.primaryVelocity?.toInt();
         // print(primvelocity.toString() + ' | ' + _deltaY.toString());
         if (primvelocity == null) {return;}
-        else if (primvelocity > 800 && _deltaY > 175) {
+        else if (primvelocity > 500 && _deltaY > 150) {
           refreshData();
         }
       },
@@ -171,7 +174,7 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
                 child: TapRegion(
                   onTapOutside: (tap) {
                     removeDropDownMenu(overlayEntry);
-                    PopUp.create(context, 2, 'IDK', 'idk long text');
+                    // PopUp.create(context, 2, 'IDK', 'idk long text');
                   },
                   child: Container(
                     width: 225,
@@ -198,6 +201,7 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
                                   setState(() {
                                     removeDropDownMenu(overlayEntry);
                                     selectedDate = index;
+                                    refreshData();
                                   });
                                 },
                                 child: Stack(
@@ -281,6 +285,7 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
   }
   Container widget_timeTable() {
     return Container(
+
       height: timetableMap.length*45,
       width: 300,
       child: ListView.builder(
@@ -290,6 +295,7 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
         itemCount: timetableMap.length,
         
         itemBuilder: ((context, index) {
+
           return Container(
             padding: EdgeInsets.all(0),
             width: 300,
