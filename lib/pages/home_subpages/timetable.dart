@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class TimeTable extends StatefulWidget {
@@ -39,7 +40,7 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
     ['006', 'Sport', ''],
 
   ];
-  int currentTimeTableMapSelection = 4;
+  int currentTimeTableMapSelection = 5;
 
   void refreshData() {
     _controllerLoadingBar.value = 0;
@@ -98,7 +99,9 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
                 const SizedBox(height: 30,),
                 widget_dateDropDown(),
                 const SizedBox(height: 30,),
-                widget_timeTable()
+                widget_timeTable(),
+                const SizedBox(height: 30,),
+                widget_fulltimetablelink()
               ],
             )
           )
@@ -276,15 +279,14 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
       ),
     );
   }
-
   Container widget_timeTable() {
     return Container(
-      height: timetableMap.length*45+timetableMap.length*5,
+      height: timetableMap.length*45,
       width: 300,
       child: ListView.builder(
 
         physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.zero,
+        padding: EdgeInsetsDirectional.all(0), // EdgeInsets.zero
         itemCount: timetableMap.length,
         
         itemBuilder: ((context, index) {
@@ -376,6 +378,42 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
               )
             );
         })
+      ),
+    );
+  }
+  GestureDetector widget_fulltimetablelink() {
+    return GestureDetector(
+      onTap: () {
+        context.push('/originaltimetable');
+      },
+      child: Container(
+        height: 45,
+        width: 225,
+        decoration: BoxDecoration(
+          color: AppColor.backgroundLight,
+          border: Border.all(color: AppColor.LightBorder, width: 1),
+          borderRadius: BorderRadius.circular(AppSizes.BorderRadiusNormal)
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: Text(
+                'Full Timetable',
+                style: TextStyle(
+                  color: AppColor.AccentHyperlink,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColor.AccentHyperlink
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: SvgPicture.asset('assets/icons/hyperlink.svg'),
+            )
+          ],
+        ),
       ),
     );
   }
