@@ -4,18 +4,19 @@ import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/dataobj/hive_metadata.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/adapters.dart';
 
-class Settings extends StatefulWidget {
-  Settings({super.key});
+class page_Settings extends StatefulWidget {
+  page_Settings({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _SettingsState();
+    return page_SettingsState();
   }
 }
 
-class _SettingsState extends State<Settings> {
+class page_SettingsState extends State<page_Settings> {
   final Box<dynamic> hiveDataBox = Hive.box('data');
 
   @override
@@ -24,7 +25,7 @@ class _SettingsState extends State<Settings> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Padding(
+        Padding( // Title
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Text(
             'S E T T I N G S',
@@ -33,16 +34,19 @@ class _SettingsState extends State<Settings> {
             ),
           ),
         ),
-        Container(
+        Container( // Seperating line
           width: 300,
           height: 1,
           decoration: BoxDecoration(
             color: AppColor.LightBorder
           ),
         ),
-        Padding(
+        Padding( // Change Timetable
           padding: const EdgeInsets.only(top: 20),
           child: GestureDetector(
+            onTap: () {
+              context.push('/settings_changetimetable');
+            },
             child: Container(
               width: 250,
               height: 45,
@@ -69,7 +73,7 @@ class _SettingsState extends State<Settings> {
             ),
           ),
         ),
-        Padding(
+        Padding( // Delete all Data
           padding: const EdgeInsets.only(top: 20),
           child: GestureDetector(
             onTap: () {
@@ -104,7 +108,6 @@ class _SettingsState extends State<Settings> {
             ),
           ),
         )
-
       ],
     );
   }

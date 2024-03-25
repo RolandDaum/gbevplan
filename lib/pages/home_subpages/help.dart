@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:hive_flutter/adapters.dart';
 
-class Help extends StatelessWidget {
+class page_Help extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -39,9 +39,9 @@ class MyApp extends StatelessWidget {
         statusBarColor: AppColor.transparent,
         systemNavigationBarColor: AppColor.transparent,
         systemStatusBarContrastEnforced: false,
+        statusBarIconBrightness: Brightness.light
       )
     );
-
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.bottom]);
 
 
@@ -54,6 +54,9 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: GoogleFonts.albertSans().fontFamily,
         textTheme: GoogleFonts.albertSansTextTheme(),
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle.light
+        )
       ),
 
       debugShowCheckedModeBanner: false,

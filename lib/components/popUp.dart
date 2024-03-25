@@ -24,7 +24,7 @@ class PopUp {
       builder: (BuildContext context) => Positioned(
         left: 50,
         right: 50,
-        bottom: 25,
+        bottom: 45,
         child: PopUpWidget(importants: importants, title: Title, message: Message, onClose: () {
           overlayEntry?.remove();
           _isShowing = false;

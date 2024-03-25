@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:hive_flutter/adapters.dart';
 
-class News extends StatelessWidget {
+class page_News extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

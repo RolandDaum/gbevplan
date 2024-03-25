@@ -7,14 +7,14 @@ import 'package:gbevplan/theme/sizes.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class OrgTimeTable extends StatefulWidget {
-  const OrgTimeTable({super.key});
+class page_OrgTimeTable extends StatefulWidget {
+  const page_OrgTimeTable({super.key});
 
   @override
-  State<OrgTimeTable> createState() => _OrgTimeTableState();
+  State<page_OrgTimeTable> createState() => page_OrgTimeTableState();
 }
 
-class _OrgTimeTableState extends State<OrgTimeTable> with SingleTickerProviderStateMixin {
+class page_OrgTimeTableState extends State<page_OrgTimeTable> with SingleTickerProviderStateMixin {
 
   late AnimationController _controllerLoadingBar;
 

@@ -9,16 +9,16 @@ import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key,});
+class page_Login extends StatefulWidget {
+  const page_Login({super.key,});
   
   @override
-  State<Login> createState() {
-    return _LoginState();
+  State<page_Login> createState() {
+    return page_LoginState();
   }
 }
 
-class _LoginState extends State<Login> {
+class page_LoginState extends State<page_Login> {
 
   final Box<dynamic> hiveDataBox = Hive.box('data');
 

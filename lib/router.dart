@@ -3,7 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:gbevplan/pages/home.dart';
 import 'package:gbevplan/pages/home_subpages/help.dart';
 import 'package:gbevplan/pages/home_subpages/news.dart';
-import 'package:gbevplan/pages/home_subpages/originaltimetable.dart';
+import 'package:gbevplan/pages/home_subpages/settings_changetimetable.dart';
+import 'package:gbevplan/pages/home_subpages/timetable_original.dart';
 import 'package:gbevplan/pages/home_subpages/settings.dart';
 import 'package:gbevplan/pages/home_subpages/timetable.dart';
 import 'package:gbevplan/pages/login.dart';
@@ -15,46 +16,51 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const Login();
+        return const page_Login();
       }
     ), 
-
     ShellRoute(
       routes: [
         GoRoute(
           path: '/timetable',
           name: 'timetable',
           builder: (BuildContext context, GoRouterState state) {
-            return TimeTable(); 
+            return page_TimeTable(); 
           } 
+        ),
+        GoRoute(
+          path: '/timetable_original',
+          builder: (BuildContext context, GoRouterState state) {
+            return page_OrgTimeTable(); 
+          }
         ),
         GoRoute(
           path: '/news',
           builder: (BuildContext context, GoRouterState state) {
-            return News(); 
+            return page_News(); 
           }
         ),
         GoRoute(
           path: '/settings',
           builder: (BuildContext context, GoRouterState state) {
-            return Settings(); 
+            return page_Settings(); 
           }
+        ),
+        GoRoute(
+          path: '/settings_changetimetable',
+          builder: (context, state) {
+            return page_ChangeTimetable();
+          },
         ),
         GoRoute(
           path: '/help',
           builder: (BuildContext context, GoRouterState state) {
-            return Help(); 
+            return page_Help(); 
           }
         ),
-        GoRoute(
-          path: '/originaltimetable',
-          builder: (BuildContext context, GoRouterState state) {
-            return OrgTimeTable(); 
-          }
-        )
       ],
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return Home(child: child,);
+        return page_Home(child: child,);
       }
     )
   ]

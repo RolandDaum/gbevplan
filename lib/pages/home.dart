@@ -6,18 +6,18 @@ import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
 
-class Home extends StatefulWidget {
+class page_Home extends StatefulWidget {
   final Widget child;
 
-  const Home({super.key, required this.child});
+  const page_Home({super.key, required this.child});
 
   @override
-  State<Home> createState() {
-    return _HomeState();
+  State<page_Home> createState() {
+    return page_HomeState();
   }
 }
 
-class _HomeState extends State<Home> {
+class page_HomeState extends State<page_Home> {
 
   double icon_padding = 11;
   String current_route = '';
@@ -35,7 +35,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColor.backgroundDark,
       body: Column(
@@ -187,35 +186,38 @@ class _HomeState extends State<Home> {
                           updateRoute();
                         });
                       },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              color: current_route == '/questions' ? AppColor.backgroundDark : AppColor.transparent,
-                              borderRadius: BorderRadius.circular(AppSizes.BorderRadiusNormal)
-                            ),
-                          ), // Background
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            width: 39,
-                            height: 39,
-                            child: Container(
-                              height: 22.5,
-                              width: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
                               decoration: BoxDecoration(
-                                color: current_route == '/questions' ? AppColor.AccentBlue : AppColor.transparent,
-                                borderRadius: BorderRadius.circular(AppSizes.BorderRadiusLarge)
+                                color: current_route == '/questions' ? AppColor.backgroundDark : AppColor.transparent,
+                                borderRadius: BorderRadius.circular(AppSizes.BorderRadiusNormal)
                               ),
-                            )
-                          ), // Blue Border side
-                          Padding(
-                            padding: EdgeInsets.all(icon_padding),
-                            child: SvgPicture.asset('assets/icons/sidebar/sidebar_questions.svg'),
-                          ) // Icon
-                        ],
+                            ), // Background
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              width: 39,
+                              height: 39,
+                              child: Container(
+                                height: 22.5,
+                                width: 3,
+                                decoration: BoxDecoration(
+                                  color: current_route == '/questions' ? AppColor.AccentBlue : AppColor.transparent,
+                                  borderRadius: BorderRadius.circular(AppSizes.BorderRadiusLarge)
+                                ),
+                              )
+                            ), // Blue Border side
+                            Padding(
+                              padding: EdgeInsets.all(icon_padding),
+                              child: SvgPicture.asset('assets/icons/sidebar/sidebar_questions.svg'),
+                            ) // Icon
+                          ],
+                        ),
                       ),
                     )
                   ],

@@ -8,14 +8,14 @@ import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/adapters.dart';
 
-class TimeTable extends StatefulWidget {
-  const TimeTable({super.key});
+class page_TimeTable extends StatefulWidget {
+  const page_TimeTable({super.key});
 
   @override
-  State<TimeTable> createState() => _TimeTableState();
+  State<page_TimeTable> createState() => page_TimeTableState();
 }
 
-class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMixin {
+class page_TimeTableState extends State<page_TimeTable> with SingleTickerProviderStateMixin {
 
   // Refresh Bar
   late AnimationController _controllerLoadingBar;
@@ -390,7 +390,7 @@ class _TimeTableState extends State<TimeTable> with SingleTickerProviderStateMix
   GestureDetector widget_fulltimetablelink() {
     return GestureDetector(
       onTap: () {
-        context.push('/originaltimetable');
+        context.push('/timetable_original');
       },
       child: Container(
         height: 45,
