@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gbevplan/components/popUp.dart';
-import 'package:gbevplan/dataobj/hive_metadata.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/adapters.dart';
 
 class page_Settings extends StatefulWidget {
   page_Settings({super.key});
@@ -17,7 +15,6 @@ class page_Settings extends StatefulWidget {
 }
 
 class page_SettingsState extends State<page_Settings> {
-  final Box<dynamic> hiveDataBox = Hive.box('data');
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +74,7 @@ class page_SettingsState extends State<page_Settings> {
           padding: const EdgeInsets.only(top: 20),
           child: GestureDetector(
             onTap: () {
-              hiveDataBox.put('metadata', null).then(
-                (value) {
-                  PopUp.create(context, 1, 'Success', 'removed all data');
-                }
-              ); // IDK catchError thing is weird
+
             },
             child: Container(
               width: 250,

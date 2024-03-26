@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gbevplan/pages/home_subpages/timetable.dart';
+import 'package:gbevplan/pages/home_subpages/page_timetable.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';

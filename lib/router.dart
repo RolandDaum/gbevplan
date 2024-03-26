@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:gbevplan/pages/home.dart';
-import 'package:gbevplan/pages/home_subpages/help.dart';
-import 'package:gbevplan/pages/home_subpages/news.dart';
-import 'package:gbevplan/pages/home_subpages/settings_changetimetable.dart';
-import 'package:gbevplan/pages/home_subpages/timetable_original.dart';
-import 'package:gbevplan/pages/home_subpages/settings.dart';
-import 'package:gbevplan/pages/home_subpages/timetable.dart';
-import 'package:gbevplan/pages/login.dart';
+import 'package:gbevplan/pages/page_home.dart';
+import 'package:gbevplan/pages/home_subpages/page_help.dart';
+import 'package:gbevplan/pages/home_subpages/page_news.dart';
+import 'package:gbevplan/pages/home_subpages/subpage_settings_changetimetable.dart';
+import 'package:gbevplan/pages/home_subpages/subpage_timetable_original.dart';
+import 'package:gbevplan/pages/home_subpages/page_settings.dart';
+import 'package:gbevplan/pages/home_subpages/page_timetable.dart';
+import 'package:gbevplan/pages/page_login.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter router = GoRouter(

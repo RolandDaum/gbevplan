@@ -1,39 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gbevplan/dataobj/hive_metadata.dart';
+import 'package:gbevplan/objectbox/userdata.dart';
+import 'package:gbevplan/objectbox/objectbox.dart';
 import 'package:gbevplan/router.dart';
 import 'package:gbevplan/theme/colors.dart';
-import 'package:gbevplan/pages/Login.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/adapters.dart';
 
-void main() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(HIVE_MetaDataAdapter());
-  Box<dynamic> data = await Hive.openBox('data');
-  if (data.get('metadata') == null) {
-    await initMetadata(data);
-  }
+late ObjectBox objectbox;
+Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  objectbox = await ObjectBox.create();
+
   runApp(const MyApp());
 }
-initMetadata(Box<dynamic> data) async {
-  HIVE_Metadata hive_metadata = HIVE_Metadata(
-    HIVE_UserData('', 0), 
-    HIVE_AppData(
-      HIVE_AppInfo('1.0.0', 'GBE-VPlan'), 
-      HIVE_UIInfo(false), 
-      HIVE_APIInfo('', 'domain.com', ''), 
-      HIVE_AppSettings(false, true)), 
-    HIVE_SecureCredentials('', '', ''));
-  print('saving metadata template');
-  await data.put('metadata', hive_metadata);
-}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: AppColor.transparent,
@@ -43,8 +30,6 @@ class MyApp extends StatelessWidget {
       )
     );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.bottom]);
-
-
     return MaterialApp.router(
       theme: ThemeData(
         textSelectionTheme: TextSelectionThemeData(

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gbevplan/components/popUp.dart';
-import 'package:gbevplan/dataobj/hive_metadata.dart';
-import 'package:gbevplan/pages/home.dart';
+import 'package:gbevplan/main.dart';
+import 'package:gbevplan/objectbox/userdata.dart';
 import 'package:gbevplan/theme//colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive/hive.dart';
+import 'package:objectbox/src/relations/to_one.dart';
 
 class page_Login extends StatefulWidget {
   const page_Login({super.key,});
@@ -20,22 +18,20 @@ class page_Login extends StatefulWidget {
 
 class page_LoginState extends State<page_Login> {
 
-  final Box<dynamic> hiveDataBox = Hive.box('data');
 
+
+
+  // UI stuff
   bool _obscureText_Password = true;
   bool _remeberme_state = false;
   TextEditingController username_controller = new TextEditingController();
   TextEditingController password_controller = new TextEditingController();
+  
+  final userBox = objectbox.store.box<OB_userdata>();
 
   @override
   void initState() {
     super.initState();
-
-    // Loading HIVE Data into State
-    HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
-    _remeberme_state = hivemetadata.appdata.uiinfo.rememberMe;
-    username_controller.text = hivemetadata.secruecredentials.username;
-    password_controller.text = hivemetadata.secruecredentials.password;
   }
 
   @override
@@ -173,17 +169,24 @@ class page_LoginState extends State<page_Login> {
         onPressed: () {
           // PopUp.create(context, 3, "Info", "logged you out");
           if (_remeberme_state) {
-            HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
-              hivemetadata.secruecredentials.username = username_controller.text;
-              hivemetadata.secruecredentials.password = password_controller.text;
-              hiveDataBox.put('metadata', hivemetadata);
+
           } else {
-            HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
-              hivemetadata.secruecredentials.username = '';
-              hivemetadata.secruecredentials.password = '';
-              hiveDataBox.put('metadata', hivemetadata);
+
           }
-          context.go('/timetable');
+
+          userBox.put(OB_userdata());
+          List<OB_userdata> userdataList = userBox.getAll();
+          print(userdataList.length);
+          userdataList.forEach((element) {
+            print(element.securecredentials.someData.data);
+          });
+
+
+
+
+
+
+          // context.go('/timetable');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.AccentBlue,
@@ -213,9 +216,7 @@ class page_LoginState extends State<page_Login> {
               setState(() {
                 _remeberme_state = !_remeberme_state;
               });
-              HIVE_Metadata hivemetadata = hiveDataBox.get('metadata');
-              hivemetadata.appdata.uiinfo.rememberMe = _remeberme_state;
-              hiveDataBox.put('metadata', hivemetadata);
+
             },
             child: Container(
               width: 20,

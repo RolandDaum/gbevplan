@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gbevplan/pages/home_subpages/news.dart';
-import 'package:gbevplan/pages/home_subpages/settings_changetimetable_subjects.dart';
-import 'package:gbevplan/pages/home_subpages/timetable.dart';
+import 'package:gbevplan/pages/home_subpages/page_news.dart';
+import 'package:gbevplan/pages/home_subpages/page_settings_changetimetable_subjects.dart';
+import 'package:gbevplan/pages/home_subpages/page_timetable.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 

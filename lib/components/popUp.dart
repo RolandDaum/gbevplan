@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:gbevplan/pages/home.dart';
+import 'package:gbevplan/pages/page_home.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 

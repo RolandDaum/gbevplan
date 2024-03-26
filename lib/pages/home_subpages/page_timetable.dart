@@ -6,7 +6,6 @@ import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/adapters.dart';
 
 class page_TimeTable extends StatefulWidget {
   const page_TimeTable({super.key});

@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class page_OrgTimeTable extends StatefulWidget {
