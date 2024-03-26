@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gbevplan/main.dart';
-import 'package:gbevplan/objectbox/userdata.dart';
 import 'package:gbevplan/theme//colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:objectbox/src/relations/to_one.dart';
+import 'package:hive/hive.dart';
 
 class page_Login extends StatefulWidget {
   const page_Login({super.key,});
@@ -18,19 +17,27 @@ class page_Login extends StatefulWidget {
 
 class page_LoginState extends State<page_Login> {
 
+  // Hive - Storage
+  Box userdata_box = Hive.box('userdata');
+  Box appdata_box = Hive.box('userdata');
+  Box apidata_box = Hive.box('apidata');
 
 
 
   // UI stuff
   bool _obscureText_Password = true;
   bool _remeberme_state = false;
-  TextEditingController username_controller = new TextEditingController();
-  TextEditingController password_controller = new TextEditingController();
+  TextEditingController username_controller = TextEditingController();
+  TextEditingController password_controller = TextEditingController();
   
-  final userBox = objectbox.store.box<OB_userdata>();
-
   @override
   void initState() {
+    _remeberme_state = appdata_box.get('rememberme');
+    // print(userdata_box.get('securedata').toString());
+    Map<dynamic, dynamic> securedata = userdata_box.get('securedata');
+    username_controller.text = securedata['username'].toString();
+    password_controller.text = securedata['password'].toString();
+
     super.initState();
   }
 
@@ -167,26 +174,13 @@ class page_LoginState extends State<page_Login> {
       width: 150,
       child: ElevatedButton(
         onPressed: () {
-          // PopUp.create(context, 3, "Info", "logged you out");
+          appdata_box.put('rememberme', _remeberme_state);
           if (_remeberme_state) {
-
+            userdata_box.put('securedata', {'username': username_controller.text, 'password': password_controller.text});
           } else {
-
+            userdata_box.put('securedata', {'username': '', 'password': ''});
           }
-
-          userBox.put(OB_userdata());
-          List<OB_userdata> userdataList = userBox.getAll();
-          print(userdataList.length);
-          userdataList.forEach((element) {
-            print(element.securecredentials.someData.data);
-          });
-
-
-
-
-
-
-          // context.go('/timetable');
+          context.go('/timetable');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.AccentBlue,

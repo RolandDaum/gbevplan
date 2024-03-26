@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 
 class page_Settings extends StatefulWidget {
   page_Settings({super.key});
@@ -15,6 +19,11 @@ class page_Settings extends StatefulWidget {
 }
 
 class page_SettingsState extends State<page_Settings> {
+
+  // Hive - Storage
+  Box userdata_box = Hive.box('userdata');
+  Box appdata_box = Hive.box('userdata');
+  Box apidata_box = Hive.box('apidata');
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +83,13 @@ class page_SettingsState extends State<page_Settings> {
           padding: const EdgeInsets.only(top: 20),
           child: GestureDetector(
             onTap: () {
-
+              Hive.deleteFromDisk().then( 
+                (event) {
+                  PopUp.create(context, 0, 'Removed', 'all data'); 
+                  SystemNavigator.pop();
+                  exit(0);
+                }
+              );
             },
             child: Container(
               width: 250,

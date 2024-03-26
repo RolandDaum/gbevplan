@@ -1,20 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gbevplan/objectbox/userdata.dart';
-import 'package:gbevplan/objectbox/objectbox.dart';
 import 'package:gbevplan/router.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-late ObjectBox objectbox;
 Future<void> main() async {
+  await Hive.initFlutter();
+  Box userdata_box = await Hive.openBox('userdata');
+  Box appdata_box = await Hive.openBox('userdata');
+  Box apidata_box = await Hive.openBox('apidata');
 
-  WidgetsFlutterBinding.ensureInitialized();
-  objectbox = await ObjectBox.create();
+  // appdata_box.deleteFromDisk();
+  // apidata_box.deleteFromDisk();
+  // userdata_box.deleteFromDisk();
+  if (appdata_box.isEmpty || userdata_box.isEmpty) {  initData();  }
+  else if (appdata_box.get('data_version') != '1.0.0') {  updataData();  }
 
   runApp(const MyApp());
 }
 
+// init Data on first startup
+void initData() {
+  print('I N I T  -  H I V E');
+  Box userdata_box = Hive.box('userdata');
+  Box appdata_box = Hive.box('userdata');
+  Box apidata_box = Hive.box('apidata');
+
+  userdata_box.put('selected_courses', List<String>);
+  userdata_box.put('jahrgang', '');
+  Map<String, String> securedata = {
+    'username': '',
+    'password': '',
+  };
+  userdata_box.put('securedata', securedata);
+
+  appdata_box.put('data_version', '1.0.0');
+  appdata_box.put('rememberme', false);
+}
+void updataData() {
+  print('U P D A T E  -  H I V E');
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

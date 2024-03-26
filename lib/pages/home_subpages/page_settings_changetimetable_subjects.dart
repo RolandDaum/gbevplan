@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
+import 'package:hive/hive.dart';
 
 class page_settings_changetimetable_subjects extends StatefulWidget {
   const page_settings_changetimetable_subjects({super.key});
@@ -12,6 +13,11 @@ class page_settings_changetimetable_subjects extends StatefulWidget {
 }
 
 class _page_settings_changetimetable_subjectsState extends State<page_settings_changetimetable_subjects> {
+
+  // Hive - Storage
+  Box userdata_box = Hive.box('userdata');
+  Box appdata_box = Hive.box('userdata');
+  Box apidata_box = Hive.box('apidata');
 
   // State var
   // - Jahrgang selection -
@@ -42,14 +48,25 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
     "sf1", "sf2", "sf3", "sf4", "sf5", "sf6"
   ];
   List<String> searchKursList = []; // Alle Kurse, die bei der Suche zutreffen
-  late List<String> nonselectedKursList; // Alle Kurse, die noch nicht ausgewählt wurden
+  late List<String> nonselectedKursList = []; // Alle Kurse, die noch nicht ausgewählt wurden
   List<String> selectedKursList = []; // Alle Kurse, die ausgewählt wurden
   TextEditingController selectKurs_controller = new TextEditingController();
   FocusNode selectKurs_focusnode = FocusNode();
 
   @override
   void initState() {
-    nonselectedKursList = List.from(KursList);
+    List<String>? storedSelectedKursList = userdata_box.get('selected_courses');
+    if (storedSelectedKursList != null && storedSelectedKursList.isNotEmpty) {
+      selectedKursList = List.from(storedSelectedKursList);
+      KursList.forEach((element) {
+        if (!selectedKursList.contains(element)) {
+          nonselectedKursList.add(element);
+        }
+      });
+    } else {
+      selectedKursList = [];
+      nonselectedKursList = List.from(KursList);
+    }
     searchKursList = List.from(nonselectedKursList);
 
     selectKurs_controller.addListener(() {
@@ -68,30 +85,15 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
         });
       });
     });
-
-    // TODO: Change 'changetimetable' just to timetable and maybe give it a direct link from navbar + add hive storage + rework hive storage system
-
     super.initState();
   }
 
-  // List<String> sortbyLK(List<String> listtosort) {
-  //   List<String> sortedList = [];
-  //   listtosort.forEach((element) {
-  //     bool isUppperCase = element.toUpperCase() == element;
-  //     if (isUppperCase) {
-  //       sortedList.add(element);
-  //       listtosort.remove(element);
-  //     }
-  //   });
-  //   listtosort.forEach((element) {
-  //     sortedList.add(element);
-  //   });
-  //   return sortedList;
-  // }
 
   @override
   void dispose() {
     // on weekday dispose save data in hive
+
+    userdata_box.put('selected_courses', selectedKursList);
 
     selectKurs_controller.dispose();
     selectKurs_focusnode.dispose();
