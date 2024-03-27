@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gbevplan/code/normTTCalc.dart';
 import 'package:gbevplan/pages/home_subpages/page_news.dart';
 import 'package:gbevplan/pages/home_subpages/page_settings_changetimetable_subjects.dart';
+import 'package:gbevplan/pages/home_subpages/page_settings_changetimetable_weekday.dart';
 import 'package:gbevplan/pages/home_subpages/page_timetable.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
@@ -40,10 +42,8 @@ class _ChangeTimetableState extends State<page_ChangeTimetable> {
       listscrollController.animateTo(currentSelection.toDouble() * 30, duration: Duration(milliseconds: 50), curve: Curves.easeInOutCubic);
     });
 
-
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,30 +110,15 @@ class _ChangeTimetableState extends State<page_ChangeTimetable> {
             controller: pageviewController,
             children: [
               page_settings_changetimetable_subjects(),
-              Placeholder(),
-              Placeholder(),
-              Placeholder(),
-              Placeholder(),
-              Placeholder(),
+              page_settings_changetimetable_weekday(weekday: 1,),
+              page_settings_changetimetable_weekday(weekday: 2,),
+              page_settings_changetimetable_weekday(weekday: 3,),
+              page_settings_changetimetable_weekday(weekday: 4,),
+              page_settings_changetimetable_weekday(weekday: 5,),
             ],
           )
         )
       ],
     );
-
-
-    // return PageView(
-    //   onPageChanged: (value) {
-    //     print(value);
-    //   },
-    //   controller: pagecontroller,
-    //   children: [
-    //     page_TimeTable(),
-    //     page_TimeTable(),
-    //     page_TimeTable(),
-    //     page_TimeTable(),
-    //   ],
-    // );
-  }
-
+ }
 }

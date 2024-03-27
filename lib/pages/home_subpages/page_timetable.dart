@@ -2,10 +2,12 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gbevplan/code/normTTCalc.dart';
 import 'package:gbevplan/components/popUp.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 
 class page_TimeTable extends StatefulWidget {
   const page_TimeTable({super.key});
@@ -16,6 +18,11 @@ class page_TimeTable extends StatefulWidget {
 
 class page_TimeTableState extends State<page_TimeTable> with SingleTickerProviderStateMixin {
 
+  // Hive - Storage
+  Box userdata_box = Hive.box('userdata');
+  Box appdata_box = Hive.box('appdata');
+  Box apidata_box = Hive.box('apidata');
+
   // Refresh Bar
   late AnimationController _controllerLoadingBar;
 
@@ -25,37 +32,79 @@ class page_TimeTableState extends State<page_TimeTable> with SingleTickerProvide
   int selectedDate = 0;
 
   // Timetable
+  late Map<int, Map<int, String>>? normTT;
   List<List<String>> timetableMap = [
-    ['001', 'Mathe', ''],
-    ['002', 'Deutsch', ''],
-    ['003', 'Deutsch', ''],
-    ['049', 'Englisch', 'Religion'],
-    ['102', 'Biologie', ''],
-    ['112', 'Chemie', ''],
-    ['204', 'Physik', ''],
-    ['005', 'PW', 'Religion'],
-    ['006', 'Informatik', ''],
-    ['006', 'Sport', ''],
-    ['006', 'Sport', ''],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
+    ['000', '---', '---'],
 
   ];
-  int currentTimeTableMapSelection = 5;
+  int currentTimeTableMapSelection = 0;
+  int currenWeekday = DateTime.now().weekday;
 
   void refreshData() {
     _controllerLoadingBar.value = 0;
     _controllerLoadingBar.animateTo(1).then((value) {
       PopUp.create(context, 1, 'Refresh', 'successfull refresh');
     });
+
+    // current lesson selection switch
+    DateTime currentDT = DateTime.now();
+
+    currentTimeTableMapSelection = -1;
+
+    if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 7,40))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 8,30))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 9,35))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 10,25))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 11,25))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 12,15))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 13,5))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 13,50))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 14,35))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 15,25))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 16,10))) {
+      currentTimeTableMapSelection++;
+    } if (currentDT.isAfter(DateTime(currentDT.year, currentDT.month, currentDT.day, 16,55))) {
+      currentTimeTableMapSelection = -1;
+    }
+    setState(() {}); // refresh the ui data
   }
 
   @override
   void initState() {
+    normTT = convertNormTTfromHiveDynMapToMap(appdata_box.get('normtimetable'));
+    if (normTT != null) {
+      for (int i = 0; i < timetableMap.length; i++) {
+        timetableMap[i][1] = normTT![currenWeekday]![i+1].toString();
+      }
+    }
+
     _controllerLoadingBar = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
       value: 0
     );
     refreshData();
+
     super.initState();
   }
 
@@ -284,7 +333,6 @@ class page_TimeTableState extends State<page_TimeTable> with SingleTickerProvide
   }
   Container widget_timeTable() {
     return Container(
-
       height: timetableMap.length*45,
       width: 300,
       child: ListView.builder(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gbevplan/code/normTTCalc.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
 import 'package:hive/hive.dart';
@@ -16,10 +17,9 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
 
   // Hive - Storage
   Box userdata_box = Hive.box('userdata');
-  Box appdata_box = Hive.box('userdata');
+  Box appdata_box = Hive.box('appdata');
   Box apidata_box = Hive.box('apidata');
 
-  // State var
   // - Jahrgang selection -
   List<Map<String, bool>> jahrgangList = [
     {'Jahrgang 5': false},
@@ -35,7 +35,7 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
   int currentSelectionJahrgangList = 6;
 
   // - Kurs selection -
-  List<String> KursList = [ // Alle Kurse
+  List<String> corsesList = [ // Alle Kurse
     "MA1", "MA2", "PH1", "CH1", "BI1", "BI2",
     "DE1", "DE2", "DE3","ENG1", "ENG2", "ENG3","LA1","FR1",
     "EK1", "PW1", "PW2","GE1", "GE2",
@@ -49,30 +49,31 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
   ];
   List<String> searchKursList = []; // Alle Kurse, die bei der Suche zutreffen
   late List<String> nonselectedKursList = []; // Alle Kurse, die noch nicht ausgewählt wurden
-  List<String> selectedKursList = []; // Alle Kurse, die ausgewählt wurden
-  TextEditingController selectKurs_controller = new TextEditingController();
-  FocusNode selectKurs_focusnode = FocusNode();
+  List<String> selectedKursList = []; // Alle Kurse, die ausgewählt wurden - wird in HIVE gespeichert
+  TextEditingController selectKursController = new TextEditingController();
+  FocusNode selectKursFocusnode = FocusNode();
 
   @override
   void initState() {
+    // Load selected course data
     List<String>? storedSelectedKursList = userdata_box.get('selected_courses');
     if (storedSelectedKursList != null && storedSelectedKursList.isNotEmpty) {
       selectedKursList = List.from(storedSelectedKursList);
-      KursList.forEach((element) {
+      corsesList.forEach((element) {
         if (!selectedKursList.contains(element)) {
           nonselectedKursList.add(element);
         }
       });
     } else {
       selectedKursList = [];
-      nonselectedKursList = List.from(KursList);
+      nonselectedKursList = List.from(corsesList);
     }
     searchKursList = List.from(nonselectedKursList);
 
-    selectKurs_controller.addListener(() {
+    selectKursController.addListener(() {
       // search Algo
       setState(() {
-        String input = selectKurs_controller.text;
+        String input = selectKursController.text;
         if (input == '') {
           searchKursList = List.from(nonselectedKursList);
           return;
@@ -85,18 +86,21 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
         });
       });
     });
+
     super.initState();
   }
 
-
   @override
   void dispose() {
-    // on weekday dispose save data in hive
-
+    // Saving selected courses
     userdata_box.put('selected_courses', selectedKursList);
 
-    selectKurs_controller.dispose();
-    selectKurs_focusnode.dispose();
+    // recalc/update normTimeTable
+    calcNormTT();
+
+    // disposing controllers (idk if necessary)
+    selectKursController.dispose();
+    selectKursFocusnode.dispose();
 
     super.dispose();
   }
@@ -243,7 +247,7 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
               TapRegion(
                 onTapOutside: (event) {
                   setState(() {
-                    selectKurs_focusnode.unfocus();
+                    selectKursFocusnode.unfocus();
                   });
                 },
                 child: Column(
@@ -256,12 +260,12 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
                       ),
                       decoration: BoxDecoration(
                         border: Border.all(color: AppColor.LightBorder, width: 2),
-                        borderRadius: selectKurs_focusnode.hasFocus ? BorderRadius.only(topLeft: Radius.circular(AppSizes.BorderRadiusNormal), topRight: Radius.circular(AppSizes.BorderRadiusNormal)) : BorderRadius.circular(AppSizes.BorderRadiusNormal)
+                        borderRadius: selectKursFocusnode.hasFocus ? BorderRadius.only(topLeft: Radius.circular(AppSizes.BorderRadiusNormal), topRight: Radius.circular(AppSizes.BorderRadiusNormal)) : BorderRadius.circular(AppSizes.BorderRadiusNormal)
                       ),
                       child: Center(
                         child: TextField(
-                          controller: selectKurs_controller,
-                          focusNode: selectKurs_focusnode,
+                          controller: selectKursController,
+                          focusNode: selectKursFocusnode,
                           onTap: () {
                             setState(() {
                               // searchKursListVisible = true;
@@ -287,7 +291,8 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
                             suffixIcon: GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  selectKurs_controller.text = '';
+                                  selectKursController.text = '';
+                                  // calcNormTT();
                                 });
                               },
                               child: Padding(
@@ -298,7 +303,7 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
                         ),
                       ),
                     ),
-                    selectKurs_focusnode.hasFocus ? Container( // Vorschläge für Textinput
+                    selectKursFocusnode.hasFocus ? Container( // Vorschläge für Textinput
                       height: searchKursList.length > 3 ? 3*45+45/2 : searchKursList.length*45,
                       // constraints: BoxConstraints(
                       //   maxHeight: 5*45,
@@ -318,7 +323,7 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
                               setState(() {
                                 selectedKursList.add(searchKursList[index]);
                                 nonselectedKursList.remove(searchKursList[index]);
-                                selectKurs_controller.text = '';
+                                selectKursController.text = '';
                               });
                             },
                             child: Container(

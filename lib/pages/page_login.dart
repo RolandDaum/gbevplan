@@ -19,7 +19,7 @@ class page_LoginState extends State<page_Login> {
 
   // Hive - Storage
   Box userdata_box = Hive.box('userdata');
-  Box appdata_box = Hive.box('userdata');
+  Box appdata_box = Hive.box('appdata');
   Box apidata_box = Hive.box('apidata');
 
 

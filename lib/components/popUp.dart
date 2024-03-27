@@ -14,7 +14,7 @@ class PopUp {
    */
   static void create(BuildContext context, int importants, String Title, String Message) async {
     if (_isShowing) {
-      print('There is already a popup');
+      // print('There is already a popup');
       return;
     }
 
@@ -52,6 +52,7 @@ class _PopUpWidgetState extends State<PopUpWidget> {
   Color background = AppColor.backgroundLight;
   Color borderColor = Color.fromARGB(0, 0, 0, 0);
   String iconPath = 'assets/icons/popUp/';
+  int showTimems = 1500;
 
   @override
   void initState() {
@@ -81,7 +82,7 @@ class _PopUpWidgetState extends State<PopUpWidget> {
         break;
     }
 
-    Future.delayed(Duration(milliseconds: 3500), () {
+    Future.delayed(Duration(milliseconds: showTimems), () {
       setState(() {
         opacity = 0;
       });
