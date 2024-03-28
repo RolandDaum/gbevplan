@@ -41,3 +41,6 @@ app.*.map.json
 /APP/android/app/debug
 /APP/android/app/profile
 /APP/android/app/release
+
+/API/certificates
+/API/node_modules
