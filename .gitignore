@@ -44,3 +44,19 @@ app.*.map.json
 
 /API/certificates
 /API/node_modules
+
+
+
+/APP/android/gradle-wrapper.jar
+/APP/android/.gradle
+/APP/android/captures/
+/APP/android/gradlew
+/APP/android/gradlew.bat
+/APP/android/local.properties
+GeneratedPluginRegistrant.java
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app
+key.properties
+/APP/android/**/*.keystore
+/APP/android/**/*.jks
