@@ -4,7 +4,6 @@ import 'package:gbevplan/code/normTTCalc.dart';
 import 'package:gbevplan/router.dart';
 import 'package:gbevplan/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> main() async {
