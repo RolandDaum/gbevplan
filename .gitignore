@@ -60,3 +60,5 @@ GeneratedPluginRegistrant.java
 key.properties
 /APP/android/**/*.keystore
 /APP/android/**/*.jks
+
+/API/.env
