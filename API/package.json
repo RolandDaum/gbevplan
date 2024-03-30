@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --env-file=.env src/main.js"
+    "start": "node --env-file=.env src/main.js",
+    "startVPlan": "node --env-file=.env src/vplanScraping.js"
   },
   "keywords": [],
   "author": "",

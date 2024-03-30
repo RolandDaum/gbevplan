@@ -8,9 +8,12 @@ const resText = {
     401: 'unauthorized',
     404: 'content not found'
 }
-const jahrgangsPath = {
+const jahrgangsPlanPath = {
     12: './src/data/Jahrgang12.json',
     13: './src/data/Jahrgang13.json'
+}
+const jahrgangsKursPath = {
+    12: './src/data/Jahrgang12Kurse.json',
 }
 
 const credentials = {
@@ -19,6 +22,7 @@ const credentials = {
 }
 const app = express();
 const PORT = 3000;
+
 
 app.get('/verify', (req, res) => {
     const verify = verifyReq(req, res);
@@ -49,6 +53,7 @@ function verifyReq(req, res) {
     }
 }
 
+
 app.get('/jahrgangsplan', (req, res) => {
     if (verifyReq(req, res) != 200) {}
 
@@ -60,7 +65,7 @@ app.get('/jahrgangsplan', (req, res) => {
     }
 
     try {
-        fs.readFile(jahrgangsPath[jahrgang], 'utf8', (err, data) => {
+        fs.readFile(jahrgangsPlanPath[jahrgang], 'utf8', (err, data) => {
             res.status(200);
             res.type('json');
             res.send(data);
@@ -69,14 +74,36 @@ app.get('/jahrgangsplan', (req, res) => {
         res.status(404);
         res.send(resText[404]);
     }
-
 });
+app.get('/jahrgangskurse', (req, res) => {
+    if (verifyReq(req, res) != 200) {}
+
+    const jahrgang = req.headers.jahrgang;
+    if (jahrgang == null) {
+        res.status(400);
+        res.send(resText[400]);
+        return;
+    }
+
+    try {
+        fs.readFile(jahrgangsKursPath[jahrgang], 'utf8', (err, data) => {
+            res.status(200);
+            res.type('json');
+            res.send(data);
+        })
+    } catch (error) {
+        res.status(404);
+        res.send(resText[404]);
+    }
+});
+
 
 app.get('/news', (req, res) => {
     if (verifyReq(req, res) != 200) {}
     res.status(200);
     res.send('news');
 })
+
 
 app.get('/vplan', (req, res) => {
     if (verifyReq(req, res) != 200) {}
@@ -88,20 +115,19 @@ app.get('/vplan', (req, res) => {
         res.send(resText[400]);
         return;
     }
-    vplanSrcaping();
-    res.send(jahrgang);
+    res.send('VPlan für Jahrgang ' + jahrgang);
 })
+
 
 var httpsServer = https.createServer(credentials, app).listen(PORT, () => {
     console.log('Started API Server on port: ' + PORT);
 });
 
 
-
 async function vplanSrcaping() {
     let driver = await new Builder().forBrowser(Browser.CHROME).build();
     try {
-        await driver.get('https://www.google.com/ncr')
+        await driver.get(`https://www.dsbmobile.de/Login.aspx?U=${process.env.apiUSERNAME}&P=${process.env.apiPASSWORD}`)
         console.log(await driver.getTitle())
       } finally {
         await driver.quit()

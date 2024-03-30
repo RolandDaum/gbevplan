@@ -92,7 +92,8 @@ class page_TimeTableState extends State<page_TimeTable> with SingleTickerProvide
   @override
   void initState() {
     normTT = convertNormTTfromHiveDynMapToMap(appdata_box.get('normtimetable'));
-    if (normTT != null) {
+    if (currenWeekday > 5) {
+    } else if (normTT != null) {
       for (int i = 0; i < timetableMap.length; i++) {
         timetableMap[i][1] = normTT![currenWeekday]![i+1].toString();
       }
