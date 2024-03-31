@@ -8,14 +8,10 @@ const resText = {
     401: 'unauthorized',
     404: 'content not found'
 }
-const jahrgangsPlanPath = {
+const jahrgangsdataPath = {
     12: './src/data/Jahrgang12.json',
     13: './src/data/Jahrgang13.json'
 }
-const jahrgangsKursPath = {
-    12: './src/data/Jahrgang12Kurse.json',
-}
-
 const credentials = {
     key: fs.readFileSync('./certificates/private.key', 'utf-8'), 
     cert: fs.readFileSync('./certificates/certificate.crt', 'utf-8')
@@ -54,7 +50,7 @@ function verifyReq(req, res) {
 }
 
 
-app.get('/jahrgangsplan', (req, res) => {
+app.get('/jahrgangsdata', (req, res) => {
     if (verifyReq(req, res) != 200) {}
 
     const jahrgang = req.headers.jahrgang;
@@ -65,35 +61,13 @@ app.get('/jahrgangsplan', (req, res) => {
     }
 
     try {
-        fs.readFile(jahrgangsPlanPath[jahrgang], 'utf8', (err, data) => {
+        fs.readFile(jahrgangsdataPath[jahrgang], 'utf8', (err, data) => {
             res.status(200);
             res.type('json');
             res.send(data);
         })
     } catch (error) {
-        res.status(404);
-        res.send(resText[404]);
-    }
-});
-app.get('/jahrgangskurse', (req, res) => {
-    if (verifyReq(req, res) != 200) {}
-
-    const jahrgang = req.headers.jahrgang;
-    if (jahrgang == null) {
-        res.status(400);
-        res.send(resText[400]);
-        return;
-    }
-
-    try {
-        fs.readFile(jahrgangsKursPath[jahrgang], 'utf8', (err, data) => {
-            res.status(200);
-            res.type('json');
-            res.send(data);
-        })
-    } catch (error) {
-        res.status(404);
-        res.send(resText[404]);
+        res.status(404).send(resText[404]);
     }
 });
 
@@ -111,8 +85,7 @@ app.get('/vplan', (req, res) => {
 
     const jahrgang = req.headers.jahrgang;
     if (jahrgang == null) {
-        res.status(400);
-        res.send(resText[400]);
+        res.status(400).send(resText[400]);
         return;
     }
     res.send('VPlan für Jahrgang ' + jahrgang);

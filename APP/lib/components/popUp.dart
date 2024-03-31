@@ -14,7 +14,7 @@ class PopUp {
    */
   static void create(BuildContext context, int importants, String Title, String Message) async {
     if (_isShowing) {
-      // print('There is already a popup');
+      print('There is already a popup');
       return;
     }
 

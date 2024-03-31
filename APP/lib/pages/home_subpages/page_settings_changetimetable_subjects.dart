@@ -183,6 +183,8 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
                                 setState(() {
                                   currentSelectionJahrgangList = index;
                                   showJahrgangList = false;
+                                  String jahrgangsKey = jahrgangList[index].entries.first.key;
+                                  userdata_box.put('jahrgang', jahrgangsKey.substring(jahrgangsKey.length-2, jahrgangsKey.length));
                                 });
                               }
                             },
@@ -220,7 +222,6 @@ class _page_settings_changetimetable_subjectsState extends State<page_settings_c
                       ),
                     )
                 ) : SizedBox()
-                  
                 ],
               )
             ],

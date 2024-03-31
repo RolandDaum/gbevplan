@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/code/normTTCalc.dart';
@@ -7,6 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> main() async {
+  HttpOverrides.global = MyHttpOverrides(); // irgendwie, dass er dann das certificate annimmt oder so. Ka von Stackoverflow und funktioniert
+
+
   await Hive.initFlutter();
   Box userdata_box = await Hive.openBox('userdata');
   Box appdata_box = await Hive.openBox('appdata');
@@ -18,6 +23,7 @@ Future<void> main() async {
   if (appdata_box.isEmpty || userdata_box.isEmpty) {  initData();  }
   else if (appdata_box.get('data_version') != '1.0.0') {  updataData();  }
 
+
   runApp(const MyApp());
 }
 
@@ -27,6 +33,7 @@ void initData() {
   Box userdata_box = Hive.box('userdata');
   Box appdata_box = Hive.box('appdata');
   Box apidata_box = Hive.box('apidata');
+  
   List<String> selectedCourseList = [];
   userdata_box.put('selected_courses', selectedCourseList);
   userdata_box.put('jahrgang', '');
@@ -45,6 +52,15 @@ void initData() {
 void updataData() {
   print('U P D A T E  -  H I V E');
 }
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -81,3 +97,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+

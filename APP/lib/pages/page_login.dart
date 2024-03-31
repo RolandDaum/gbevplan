@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gbevplan/code/API_JahrgansData.dart';
 import 'package:gbevplan/main.dart';
 import 'package:gbevplan/theme//colors.dart';
 import 'package:gbevplan/theme/sizes.dart';
@@ -21,8 +22,6 @@ class page_LoginState extends State<page_Login> {
   Box userdata_box = Hive.box('userdata');
   Box appdata_box = Hive.box('appdata');
   Box apidata_box = Hive.box('apidata');
-
-
 
   // UI stuff
   bool _obscureText_Password = true;
@@ -180,7 +179,13 @@ class page_LoginState extends State<page_Login> {
           } else {
             userdata_box.put('securedata', {'username': '', 'password': ''});
           }
-          context.go('/timetable');
+          getJahrgangsdata(context).then((value) {
+            if (value != null ) {
+              print(value.kurse.toString());
+            }
+          }).then((value) => {
+            context.go('/timetable')
+          });
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.AccentBlue,
