@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
+    "latest": "^0.2.0",
     "selenium-webdriver": "^4.19.0"
   },
   "type": "module"
