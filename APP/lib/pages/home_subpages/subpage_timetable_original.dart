@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,16 +15,27 @@ class page_OrgTimeTable extends StatefulWidget {
 }
 
 class page_OrgTimeTableState extends State<page_OrgTimeTable> with SingleTickerProviderStateMixin {
+  // Query dbRef = FirebaseDatabase.instance.ref().child('URL');
+  DatabaseReference reference = FirebaseDatabase.instance.ref().child('/URL');
 
   late AnimationController _controllerLoadingBar;
 
-  WebViewController _controllerWebView = WebViewController()
+  final WebViewController _controllerWebView = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setBackgroundColor(const Color(0x00000000))
     ..enableZoom(true);
+  
+  String url = 'https://rolanddaum.github.io/gbevplan/';
 
   @override
   void initState() {
+    reference.get().then((value) => {
+      value.children.forEach((element) {
+        url = element.value.toString();
+        _controllerWebView.loadRequest(Uri.parse(url));
+      })
+    });
+
     _controllerLoadingBar = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 500),
@@ -53,7 +65,8 @@ class page_OrgTimeTableState extends State<page_OrgTimeTable> with SingleTickerP
     );
 
     _controllerWebView.clearCache();
-    _controllerWebView.loadRequest(Uri.parse('https://rolanddaum.github.io/gbevplan/'));
+    _controllerWebView.loadRequest(Uri.parse(url));
+    // _controllerWebView.loadRequest(Uri.parse(reference.get().));
 
     super.initState();
   }

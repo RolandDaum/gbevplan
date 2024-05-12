@@ -179,13 +179,14 @@ class page_LoginState extends State<page_Login> {
           } else {
             userdata_box.put('securedata', {'username': '', 'password': ''});
           }
-          getJahrgangsdata(context).then((value) {
-            if (value != null ) {
-              print(value.kurse.toString());
-            }
-          }).then((value) => {
-            context.go('/timetable')
-          });
+            context.go('/timetable');
+          // getJahrgangsdata(context).then((value) {
+          //   if (value != null ) {
+          //     print(value.kurse.toString());
+          //   }
+          // }).then((value) => {
+          //   context.go('/timetable')
+          // });
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.AccentBlue,
