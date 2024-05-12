@@ -63,3 +63,5 @@ key.properties
 
 /API/.env
 /API/src/data
+
+/APP/lib/firebase_options.dart
