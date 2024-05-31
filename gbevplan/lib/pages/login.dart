@@ -14,17 +14,20 @@ class _page_loginState extends State<page_login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: true,
       extendBody: true,
+      // extendBodyBehindAppBar: true,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
               "GBE - VPlan",
+              // style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.w900),
               style: Theme.of(context).textTheme.displaySmall,
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 56),
+              margin: const EdgeInsets.symmetric(horizontal: 56),
               child: Column(
                 children: [
                   const TextField(
@@ -79,10 +82,16 @@ class _page_loginState extends State<page_login> {
                 ],
               ),
             ),
-            Text("made by omg_ot")
           ],
         ),
       ),
+      bottomNavigationBar: Container(child: Text("made by omg_ot"),
+        height: 35,
+        alignment: Alignment.topCenter,
+        padding: const EdgeInsetsDirectional.only(bottom: 15),
+      ),
+
     );
+    
   }
 }
