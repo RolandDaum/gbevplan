@@ -1,7 +1,10 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gbevplan/pages/home.dart';
+import 'package:gbevplan/pages/Home.dart';
+import 'package:gbevplan/pages/home_screens/HomeNews.dart';
+import 'package:gbevplan/pages/home_screens/HomeOGTimeTable.dart';
+import 'package:gbevplan/pages/home_screens/HomeSettings.dart';
 import 'package:gbevplan/pages/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,23 +22,6 @@ class MainGBEVplan extends StatefulWidget {
 // ignore: camel_case_types
 class Main_GBEVplanState extends State<MainGBEVplan> {
   @override
-  void initState() {
-    super.initState();
-
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        // statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarContrastEnforced: false
-        // systemStatusBarContrastEnforced: false,
-        // statusBarIconBrightness: Brightness.light
-      )
-    );
-
-
-  }
-
-  @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
@@ -43,18 +29,26 @@ class Main_GBEVplanState extends State<MainGBEVplan> {
         title: 'Flutter Demo',
         theme: ThemeData(
             useMaterial3: true,
-            colorScheme: lightDynamic == null ? ColorScheme.fromSeed(seedColor: Colors.red) : lightDynamic,
-            fontFamily: GoogleFonts.mPlusRounded1c().fontFamily),
+            brightness: Brightness.light,
+            fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
+            colorSchemeSeed:
+                lightDynamic != null ? lightDynamic.primary : Colors.blue[900]),
         darkTheme: ThemeData(
-            colorScheme: lightDynamic == null ? ColorScheme.fromSeed(seedColor: Colors.green) : darkDynamic,
             useMaterial3: true,
-            fontFamily: GoogleFonts.mPlusRounded1c().fontFamily),
-        // themeMode: lightDynamic == null || darkDynamic == null ? ThemeMode.dark : ThemeMode.system,
+            brightness: Brightness.dark,
+            fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
+            colorSchemeSeed:
+                darkDynamic != null ? darkDynamic.primary : Colors.blue[900]),
+        themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
+        // debugShowMaterialGrid: true,
         initialRoute: '/',
         routes: {
           '/': (context) => const page_login(),
-          '/home': (context) => const page_home()
+          '/home': (context) => const Home(),
+          '/home/settings': (context) => const HomeSettings(),
+          '/home/news': (context) => const HomeNews(),
+          '/home/ogtt': (context) => const HomeOGTimeTable()
         },
       );
     });
