@@ -6,7 +6,8 @@
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "allowSyntheticDefaultImports": true // fixes a selenium .ts bug
   },
   "compileOnSave": true,
   "include": [

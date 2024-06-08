@@ -26,7 +26,7 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
 
   final WebViewController _webviewController = WebViewController()
     // ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    // ..setBackgroundColor(Colors.transparent)
+    ..setBackgroundColor(Colors.transparent)
     ..setNavigationDelegate(
       NavigationDelegate(
         onProgress: (int progress) {
