@@ -1,0 +1,22 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "gbevplan",
+          "appId": "1:557926074854:android:7de41af9cb3601859c2e27",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "gbevplan",
+          "configurations": {
+            "android": "1:557926074854:android:7de41af9cb3601859c2e27",
+            "ios": "1:557926074854:ios:fe65346a5531d6879c2e27"
+          }
+        }
+      }
+    }
+  }
+}

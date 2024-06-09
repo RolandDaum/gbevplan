@@ -1,6 +1,7 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:gbevplan/firebase_options.dart';
 import 'package:gbevplan/pages/Home.dart';
 import 'package:gbevplan/pages/home_screens/HomeNews.dart';
 import 'package:gbevplan/pages/home_screens/HomeOGTimeTable.dart';
@@ -8,7 +9,11 @@ import 'package:gbevplan/pages/home_screens/HomeSettings.dart';
 import 'package:gbevplan/pages/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MainGBEVplan());
 }
 

@@ -8,40 +8,23 @@ import * as admin from "firebase-admin";
 // Firebase Admin SDK initialisieren
 admin.initializeApp();
 const db = admin.database();
+
 // 0 0/5 11-16 ? * * *
 export const UUIDFunction = onSchedule("*/15 * * * *", async () => {
-  const minDataAge = 12;
-  let timetorefetch = true;
-
-  await db.ref("/URL/0").once("value", (snapshot) => {
-    if (!snapshot || snapshot.val() === null || !snapshot.exists()) {
-      timetorefetch = true;
-    } else {
-      const timeDifference = Date.now() -
-      new Date(snapshot.val().timestamp).getTime();
-      timetorefetch =
-      timeDifference > (minDataAge * 3600000);
-      // log("TimeDiff: " + timeDifference + " | ReadTimeStamp: "
-      // + snapshot.val().timestamp + " | TimeToReFetch: " + timetorefetch);
-    }
-  });
-
-  if (!timetorefetch) {
-    log(`Data is not older than ${minDataAge}`);
-    return;
-  } else if (timetorefetch) {
-    let counter = 0;
-    let uuids:string[] = [];
-    while (uuids.length == 0 && counter < 10) {
-      uuids = await fetchUUIDs();
-      counter++;
-    }
-    log(`Successfully fetched all uuid's \n ${uuids.toString()}`);
-    await saveUUIDsToDatabase(uuids);
-  }
+  await uuidFunction();
+  return;
 });
 
 export const UUIDFunctionOnRequest = onRequest(async () => {
+  await uuidFunction();
+  return;
+});
+
+/**
+ *
+ * @return {void}
+ */
+async function uuidFunction() {
   const minDataAge = 12;
   let timetorefetch = true;
 
@@ -71,7 +54,7 @@ export const UUIDFunctionOnRequest = onRequest(async () => {
     log(`Successfully fetched all uuid's \n ${uuids.toString()}`);
     await saveUUIDsToDatabase(uuids);
   }
-});
+}
 
 /**
  *
