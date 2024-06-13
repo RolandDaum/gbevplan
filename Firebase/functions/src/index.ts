@@ -1,22 +1,37 @@
-import {onSchedule} from "firebase-functions/v2/scheduler";
-import {onRequest} from "firebase-functions/v2/https";
-import {log} from "firebase-functions/logger";
+import {onCall, onRequest} from "firebase-functions/v2/https";
+// import {log} from "firebase-functions/logger";
 import {Builder, By, until} from "selenium-webdriver";
 import {Options} from "selenium-webdriver/chrome";
 import * as admin from "firebase-admin";
+import {log} from "firebase-functions/logger";
 
 // Firebase Admin SDK initialisieren
 admin.initializeApp();
 const db = admin.database();
 
-// 0 0/5 11-16 ? * * *
-export const UUIDFunction = onSchedule("*/15 * * * *", async () => {
+export const UUIDFunctionOnCall = onCall({
+  memory: "4GiB",
+  timeoutSeconds: 60,
+  concurrency: 1,
+  maxInstances: 1,
+}, async () => {
+  const starttime = Date.now();
   await uuidFunction();
+  const endtime = Date.now();
+  log((endtime-starttime).toString() + "ms");
   return;
 });
-
-export const UUIDFunctionOnRequest = onRequest(async () => {
+export const UUIDFunctionOnRequest = onRequest({
+  memory: "4GiB",
+  timeoutSeconds: 60,
+  concurrency: 1,
+  maxInstances: 1,
+}, async (requset, response) => {
+  const starttime = Date.now();
   await uuidFunction();
+  const endtime = Date.now();
+  log((endtime-starttime).toString() + "ms");
+  response.send((endtime-starttime).toString() + "ms");
   return;
 });
 
@@ -24,78 +39,83 @@ export const UUIDFunctionOnRequest = onRequest(async () => {
  *
  * @return {void}
  */
-async function uuidFunction() {
-  const minDataAge = 12;
+async function uuidFunction(): Promise<void> {
+  const minDataAgeMS = (120000);
   let timetorefetch = true;
 
+  // checks how old the last datawrite is
   await db.ref("/URL/0").once("value", (snapshot) => {
-    if (!snapshot || snapshot.val() === null || !snapshot.exists()) {
+    if (!snapshot.exists() || snapshot.val() == null ||
+    snapshot.val().timestamp == null) {
       timetorefetch = true;
     } else {
       const timeDifference = Date.now() -
       new Date(snapshot.val().timestamp).getTime();
       timetorefetch =
-      timeDifference > (minDataAge * 3600000);
-      // log("TimeDiff: " + timeDifference + " | ReadTimeStamp: "
-      // + snapshot.val().timestamp + " | TimeToReFetch: " + timetorefetch);
+      timeDifference > minDataAgeMS;
     }
+  }).catch((error) => {
+    log(error);
   });
-
+  // If it is old enough, fetch the uuid's until he gets it or
+  // just ends up with 5 missleading try's
   if (!timetorefetch) {
-    log(`Data is not older than ${minDataAge}`);
     return;
-  } else if (timetorefetch) {
-    let counter = 0;
-    let uuids:string[] = [];
-    while (uuids.length == 0 && counter < 10) {
-      uuids = await fetchUUIDs();
-      counter++;
-    }
-    log(`Successfully fetched all uuid's \n ${uuids.toString()}`);
+  }
+  const username:string =
+    (await db.ref("/credentials/username").once("value")).val();
+  const password:string =
+    (await db.ref("/credentials/password").once("value")).val();
+  let counter = 0;
+  let uuids:string[] = [];
+  while (uuids.length == 0 && counter < 5) {
+    uuids = await fetchUUIDs(username, password);
+    counter++;
+  }
+  if (uuids.length != 0) {
     await saveUUIDsToDatabase(uuids);
   }
+  return;
 }
 
 /**
- *
- * @return {String[]} with all uuids
+ * Fethces all available uuid's and returns them as an string[]
+ * @return {string[]} with all uuids
+ * @argument {string} username takes the username as a string
+ * @argument {string} password takes the password as a string
  */
-async function fetchUUIDs(): Promise<string[]> {
-  // Chrome-Optionen für den Headless-Modus einstellen
+async function fetchUUIDs(username:string, password:string): Promise<string[]> {
   const options = new Options();
-  options.addArguments("--headless"); // Headless-Modus aktivieren
+  options.addArguments("--headless");
 
-  // WebDriver für Chrome erstellen
   const driver = await new Builder()
     .forBrowser("chrome")
     .setChromeOptions(options)
     .build();
 
+  if (username == null || password == null ||
+     username.length == 0 || password.length == 0) {
+    await driver.quit();
+    return [];
+  }
+
   try {
-    // Zur angegebenen URL navigieren
-    await driver.get("https://www.dsbmobile.de/Login.aspx?U=346481&P=gbevplan");
-
-    // Sicherstellen, dass die Seite geladen ist
-    await driver.wait(until.titleIs("DSBmobile"), 20000);
-
-    // Alle Elemente mit data-uuid Attribut finden
+    await driver.get(`https://www.dsbmobile.de/Login.aspx?U=${username}&P=${password}`);
+    await driver.wait(until.titleIs("DSBmobile"), 20000).catch((error) => {
+      log(error);
+    });
     const elements = await driver.findElements(By.css("[data-uuid]"));
-
-    // data-uuid Attribute extrahieren
     const uuids = await Promise.all(elements.map(async (element) => {
       return await element.getAttribute("data-uuid");
     }));
-
-    // data-uuid Werte ausgeben
     return uuids;
   } finally {
-    // Browser schließen
     await driver.quit();
   }
 }
 
 /**
- *
+ *  Takes a string[] and saves it unter /URL/{index}/uuid
  * @param {string[]} uuids with all uuids and saves it into RTDB
  */
 async function saveUUIDsToDatabase(uuids: string[]): Promise<void> {
@@ -113,6 +133,8 @@ async function saveUUIDsToDatabase(uuids: string[]): Promise<void> {
         uuid: value,
         timestamp: timestamp,
       }
-    );
+    ).catch((error) => {
+      log(error);
+    });
   }
 }

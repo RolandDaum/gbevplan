@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
         elevation: 0,
         onPressed: () => {Navigator.pushNamed(context, "/home/ogtt")},
         enableFeedback: true,
-        child: Icon(Icons.open_in_new_outlined),
+        child: const Icon(Icons.open_in_new_outlined),
       ),
       primary:
           true, // Is nessesary that the body does not get under the system tray

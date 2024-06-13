@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -49,7 +50,7 @@ class HomeSettingsState extends State<HomeSettings> {
                   const Divider(
                     indent: 16,
                     endIndent: 16,
-                  ),
+                  )
                 ],
               ),
             ),

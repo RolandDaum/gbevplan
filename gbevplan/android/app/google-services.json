@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:557926074854:android:7de41af9cb3601859c2e27",
+        "mobilesdk_app_id": "1:557926074854:android:87ca6d0c6944e2b19c2e27",
         "android_client_info": {
-          "package_name": "gbe.vplan"
+          "package_name": "com.gbe.vplan"
         }
       },
       "oauth_client": [],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/components/BottomSheetLesson.dart';
-import 'package:gbevplan/components/EmptyWidget.dart';
 import 'package:gbevplan/components/TimeTableEntry.dart';
 
 class HomeVPlan extends StatefulWidget {

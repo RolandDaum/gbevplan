@@ -1,9 +1,6 @@
-import 'dart:convert';
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vibration/vibration.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -24,6 +21,16 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
   void initState() {
     super.initState();
     _fetchData();
+    // FirebaseDatabase.instance.ref("/URL").onChildChanged.forEach((event) {
+    //   final data = event.snapshot.value as List<dynamic>;
+    //   setState(() {
+    //     uuidList = data
+    //         .map((item) => (item as Map<dynamic, dynamic>)['uuid'] as String)
+    //         .toList();
+    //     updateSide();
+    //   });
+    // }).catchError((error) =>
+    //     {print('An Error occoured: $error'), Navigator.pop(context)});
   }
 
   void _fetchData() {
@@ -40,12 +47,19 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
         {print('An Error occoured: $error'), Navigator.pop(context)});
   }
 
-  void updateSide() {
+  void updateSide() async {
+    String url = "";
+    await FirebaseDatabase.instance
+        .ref('/credentials/suuid')
+        .once()
+        .then((event) => {
+              print(event.snapshot.value.toString()),
+              url =
+                  'https://dsbmobile.de/data/${event.snapshot.value.toString()}/${uuidList.elementAt(selectedUUID)}/${uuidList.elementAt(selectedUUID)}.htm'
+            });
     setState(() {
-      _webviewController.loadRequest(Uri.parse(
-          'https://dsbmobile.de/data/a2223098-b91f-4526-b48d-55af00305b46/${uuidList.elementAt(selectedUUID)}/${uuidList.elementAt(selectedUUID)}.htm'));
+      _webviewController.loadRequest(Uri.parse(url));
     });
-    print(selectedUUID);
   }
 
   @override
@@ -58,7 +72,6 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
   }
 
   final WebViewController _webviewController = WebViewController()
-    // ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setBackgroundColor(Colors.transparent)
     ..setNavigationDelegate(
       NavigationDelegate(
@@ -77,13 +90,6 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
     )
     ..clearLocalStorage()
     ..clearCache();
-  // ..loadRequest(Uri.parse('https://rolanddaum.github.io/gbevplan/'));
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +102,9 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
         actions: [
           GestureDetector(
             onTap: () {
+              // HapticFeedback.heavyImpact();
+              Vibration.vibrate(duration: 75);
+
               setState(() {
                 selectedUUID = (selectedUUID - 1 < 0)
                     ? (uuidList.length - 1)
@@ -108,6 +117,10 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
           const SizedBox(width: 16),
           GestureDetector(
             onTap: () {
+              // HapticFeedback.vibrate();
+              // HapticFeedback.heavyImpact();
+              Vibration.vibrate(duration: 75);
+
               setState(() {
                 selectedUUID = (selectedUUID + 1 >= uuidList.length)
                     ? 0
