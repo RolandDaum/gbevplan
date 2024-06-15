@@ -1,4 +1,4 @@
-package com.gbe.vplan.gbevplan
+package com.gbevplan.gbevplan
 
 import io.flutter.embedding.android.FlutterActivity
 

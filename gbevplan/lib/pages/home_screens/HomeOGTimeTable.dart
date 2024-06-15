@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vibration/vibration.dart';
+// import 'package:vibration/vibration.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -40,14 +41,16 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
         uuidList = data
             .map((item) => (item as Map<dynamic, dynamic>)['uuid'] as String)
             .toList();
-        updateSide();
+        updateSide(false);
       });
       // ignore: invalid_return_type_for_catch_error
     }).catchError((error) =>
         {print('An Error occoured: $error'), Navigator.pop(context)});
   }
 
-  void updateSide() async {
+  void updateSide(bool hapticfeedback) async {
+    hapticfeedback ? HapticFeedback.vibrate() : ();
+
     String url = "";
     await FirebaseDatabase.instance
         .ref('/credentials/suuid')
@@ -75,9 +78,9 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
     ..setBackgroundColor(Colors.transparent)
     ..setNavigationDelegate(
       NavigationDelegate(
-        // onProgress: (int progress) {
-        //   // print("|-|-|-| - " + progress.toString());
-        // },
+        onProgress: (int progress) {
+          // print("|-|-|-| - " + progress.toString());
+        },
         // onPageStarted: (String url) {},
         // onPageFinished: (String url) {},
         // onHttpError: (HttpResponseError error) {},
@@ -101,15 +104,12 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
       appBar: AppBar(
         actions: [
           GestureDetector(
-            onTap: () {
-              // HapticFeedback.heavyImpact();
-              Vibration.vibrate(duration: 75);
-
+            onTap: () async {
               setState(() {
                 selectedUUID = (selectedUUID - 1 < 0)
                     ? (uuidList.length - 1)
                     : (selectedUUID - 1);
-                updateSide();
+                updateSide(true);
               });
             },
             child: const Icon(Icons.arrow_back_ios_rounded),
@@ -117,15 +117,11 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
           const SizedBox(width: 16),
           GestureDetector(
             onTap: () {
-              // HapticFeedback.vibrate();
-              // HapticFeedback.heavyImpact();
-              Vibration.vibrate(duration: 75);
-
               setState(() {
                 selectedUUID = (selectedUUID + 1 >= uuidList.length)
                     ? 0
                     : (selectedUUID + 1);
-                updateSide();
+                updateSide(true);
               });
             },
             child: const Icon(Icons.arrow_forward_ios_rounded),

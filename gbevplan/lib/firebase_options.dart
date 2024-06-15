@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAFMppe-XXVAPe4oWMFhko1-N04FHyPbPc',
-    appId: '1:557926074854:android:87ca6d0c6944e2b19c2e27',
+    appId: '1:557926074854:android:5f6b65e227154f7c9c2e27',
     messagingSenderId: '557926074854',
     projectId: 'gbevplan',
     databaseURL: 'https://gbevplan-default-rtdb.firebaseio.com',
@@ -60,11 +60,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyATMoOizb5LulBOYWCZDG6H2kHnPMAre4o',
-    appId: '1:557926074854:ios:f536c859a761a5489c2e27',
+    appId: '1:557926074854:ios:5b85839ae12cd9609c2e27',
     messagingSenderId: '557926074854',
     projectId: 'gbevplan',
     databaseURL: 'https://gbevplan-default-rtdb.firebaseio.com',
     storageBucket: 'gbevplan.appspot.com',
-    iosBundleId: 'com.gbe.vplan',
+    iosBundleId: 'com.gbevplan.gbevplan',
   );
 }

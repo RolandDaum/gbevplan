@@ -385,7 +385,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gbe.vplan.gbevplan.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gbevplan.gbevplan.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/gbevplan.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/gbevplan";
@@ -399,7 +399,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gbe.vplan.gbevplan.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gbevplan.gbevplan.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/gbevplan.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/gbevplan";
@@ -413,7 +413,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gbe.vplan.gbevplan.RunnerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gbevplan.gbevplan.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/gbevplan.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/gbevplan";
