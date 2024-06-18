@@ -45,30 +45,26 @@ class Main_GBEVplanState extends State<MainGBEVplan> {
     _callFunction();
   }
 
-  Future<void> _callFunction() async {
+  void _callFunction() async {
     int timestamp = 0;
     await FirebaseDatabase.instance
         .ref("/URL/0/timestamp")
         .once()
-        .then((value) => {timestamp = value.snapshot.value as int})
-        .catchError((onError) => {print('Error ${onError}')});
+        .then((value) => {
+              value.snapshot.value != null
+                  ? timestamp = value.snapshot.value as int
+                  : ()
+            })
+        .onError((e, s) => {});
     if (!(timestamp <=
         DateTime.now().millisecondsSinceEpoch - (5 * 60 * 1000))) {
-      // print([
-      //   timestamp,
-      //   (DateTime.now().millisecondsSinceEpoch - (5 * 60 * 1000))
-      // ]);
-      // print("not enough time has past");
       return;
     }
-    try {
-      await FirebaseFunctions.instanceFor(region: 'us-central1')
-          .httpsCallable('UUIDFunctionOnCall')
-          .call()
-          .then((value) => {print("C A L L E D")});
-    } catch (e) {
-      print('Error: $e');
-    }
+    await FirebaseFunctions.instanceFor(region: 'us-central1')
+        .httpsCallable('UUIDFunctionOnCall')
+        .call()
+        .then((value) => {print("C A L L E D")})
+        .onError((e, s) => {print(e)});
   }
 
   @override

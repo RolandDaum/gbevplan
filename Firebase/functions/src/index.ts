@@ -1,5 +1,6 @@
-import {onCall, onRequest} from "firebase-functions/v2/https";
-// import {log} from "firebase-functions/logger";
+import {CallableOptions, onCall, onRequest} from "firebase-functions/v2/https";
+import {onSchedule} from "firebase-functions/v2/scheduler";
+// import {onValueUpdated} from "firebase-functions/v2/database";
 import {Builder, By, until} from "selenium-webdriver";
 import {Options} from "selenium-webdriver/chrome";
 import * as admin from "firebase-admin";
@@ -9,38 +10,47 @@ import {log} from "firebase-functions/logger";
 admin.initializeApp();
 const db = admin.database();
 
-export const UUIDFunctionOnCall = onCall({
+const defaultConfig: CallableOptions = {
   memory: "4GiB",
   timeoutSeconds: 60,
   concurrency: 1,
+  cpu: 1,
   maxInstances: 1,
+};
+
+export const UUIDFunctionSchedule = onSchedule({
+  schedule: "0 */1 * * *", // every hour
+  memory: defaultConfig.memory,
+  timeoutSeconds: defaultConfig.timeoutSeconds,
+  concurrency: defaultConfig.concurrency,
+  maxInstances: defaultConfig.maxInstances,
 }, async () => {
-  const starttime = Date.now();
-  await uuidFunction();
-  const endtime = Date.now();
-  log((endtime-starttime).toString() + "ms");
+  const times:number[] = await uuidFunction();
+  log("R U N T I M E : " + (times[1]-times[0]).toString() + "ms");
   return;
 });
-export const UUIDFunctionOnRequest = onRequest({
-  memory: "4GiB",
-  timeoutSeconds: 60,
-  concurrency: 1,
-  maxInstances: 1,
-}, async (requset, response) => {
-  const starttime = Date.now();
-  await uuidFunction();
-  const endtime = Date.now();
-  log((endtime-starttime).toString() + "ms");
-  response.send((endtime-starttime).toString() + "ms");
+export const UUIDFunctionOnCall = onCall(defaultConfig, async () => {
+  const times:number[] = await uuidFunction();
+  log("R U N T I M E : " + (times[1]-times[0]).toString() + "ms");
+  return;
+});
+export const UUIDFunctionOnRequest =
+onRequest(defaultConfig, async (requset, response) => {
+  const times:number[] = await uuidFunction();
+  log("R U N T I M E : " + (times[1]-times[0]).toString() + "ms");
+  response.send((times[1]-times[0]).toString() + "ms");
   return;
 });
 
 /**
- *
- * @return {void}
+ * Main Function which gets executed by all cloud functions
+ * @return {number[]} An array containing the start and end time of the runtime
  */
-async function uuidFunction(): Promise<void> {
+async function uuidFunction(): Promise<number[]> {
+  const starttime = Date.now();
+
   const minDataAgeMS = (120000);
+  // const minDataAgeMS = (0);
   let timetorefetch = true;
 
   // checks how old the last datawrite is
@@ -57,29 +67,49 @@ async function uuidFunction(): Promise<void> {
   }).catch((error) => {
     log(error);
   });
-  // If it is old enough, fetch the uuid's until he gets it or
-  // just ends up with 5 missleading try's
   if (!timetorefetch) {
-    return;
+    const endtime = Date.now();
+    return [starttime, endtime];
   }
+
+  // auth credentials
   const username:string =
     (await db.ref("/credentials/username").once("value")).val();
   const password:string =
     (await db.ref("/credentials/password").once("value")).val();
+
   let counter = 0;
   let uuids:string[] = [];
   while (uuids.length == 0 && counter < 5) {
     uuids = await fetchUUIDs(username, password);
     counter++;
   }
+
   if (uuids.length != 0) {
+    // ---- THIS DID NOT WORK ---- unessesary don't use it again
+    // const previousUUIDS: string[] = [];
+    // try {
+    //   const snapshot = await admin.database().ref("/URL").once("value");
+    //   snapshot.forEach((childSnapshot) => {
+    //     const uuid = childSnapshot.child("uuid").val();
+    //     if (uuid) {
+    //       previousUUIDS.push(uuid);
+    //     }
+    //   });
+    // } catch (error) {
+    //   log("E R R O R : " + error);
+    // }
+    // TODO: Is this really nessecary? Cause the timestamps won't beupdated.
+    // if (!(uuids.toString() === previousUUIDS.toString())) {
     await saveUUIDsToDatabase(uuids);
+    // }
   }
-  return;
+  const endtime = Date.now();
+  return [starttime, endtime];
 }
 
 /**
- * Fethces all available uuid's and returns them as an string[]
+ * Fethces all available uuid's and returns them yas an string[]
  * @return {string[]} with all uuids
  * @argument {string} username takes the username as a string
  * @argument {string} password takes the password as a string
@@ -119,13 +149,10 @@ async function fetchUUIDs(username:string, password:string): Promise<string[]> {
  * @param {string[]} uuids with all uuids and saves it into RTDB
  */
 async function saveUUIDsToDatabase(uuids: string[]): Promise<void> {
-  // const timestamp = admin.database.ServerValue.TIMESTAMP;
+  log("saving new uuids");
   const timestamp = Date.now();
-
   const ref = db.ref("/URL");
-  // clears URL db
   await ref.remove();
-
   for (let i = 0; i < uuids.length; i++) {
     const value = uuids[i];
     await db.ref(`/URL/${i.toString()}`).set(
