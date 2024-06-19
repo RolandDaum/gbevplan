@@ -11,12 +11,8 @@ class page_login extends StatefulWidget {
 
 // ignore: camel_case_types
 class _page_loginState extends State<page_login> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   bool _remmevalue = false;
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

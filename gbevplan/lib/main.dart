@@ -1,7 +1,9 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/firebase_options.dart';
@@ -10,13 +12,82 @@ import 'package:gbevplan/pages/home_screens/HomeNews.dart';
 import 'package:gbevplan/pages/home_screens/HomeOGTimeTable.dart';
 import 'package:gbevplan/pages/home_screens/HomeSettings.dart';
 import 'package:gbevplan/pages/login.dart';
+import 'package:gbevplan/pages/test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-main() async {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("ON BACKGROUNDMESSAGE");
+  // navigatorKey.currentState?.pushNamed("/PAGE_TEST",
+  //     arguments: "YOU GOT A NOTIFICATION WHILE THE APP WAS CLOSED");
+  print(message.notification?.title);
+
+  // TODO: Process the new data
+  await Future.delayed(const Duration(seconds: 5));
+
+  // https://www.youtube.com/watch?v=MTGAFvF1qVI&ab_channel=HussainMustafa
+  if (message.notification?.title != null) {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: 123,
+            channelKey: "localchannel",
+            title: "U P D A T E D  -  T I M E T A B L E",
+            body: "t i m e t a b l e"));
+  }
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Local Notification
+  await AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+        channelGroupKey: "localChannel_Group",
+        channelKey: "localchannel",
+        channelName: "Local Notification Channel",
+        channelDescription: "Local Notification Channel"),
+    // icon: ""
+  ], channelGroups: [
+    NotificationChannelGroup(
+        channelGroupKey: "localChannel_Group",
+        channelGroupName: "Local Notification Channel Group")
+  ]);
+  if (!await AwesomeNotifications().isNotificationAllowed()) {
+    AwesomeNotifications().requestPermissionToSendNotifications();
+  }
+
+  // F I R E B A S E - M E S S A G I N G
+  await FirebaseMessaging.instance.requestPermission(
+      // alert: true,
+      // announcement: false,
+      // badge: true,
+      // carPlay: false,
+      // criticalAlert: false,
+      // provisional: false,
+      // sound: true,
+      );
+  FirebaseMessaging.instance.subscribeToTopic("everyone");
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("ON MESSAGE");
+    navigatorKey.currentState?.pushNamed("/PAGE_TEST",
+        arguments: "YOU GOT A NOTIFICATION WHILE BEING INSIDE THE APP");
+  });
+  FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    print("ON MESSAGE opend APP");
+    navigatorKey.currentState
+        ?.pushNamed("/PAGE_TEST", arguments: "YOU TAPPED ON THE NOTIFICATION");
+  });
+  FirebaseMessaging.instance.getToken().then((token) {
+    print(token);
+  });
+
+  // Navigation/Notification Bar Style
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       statusBarIconBrightness:
@@ -72,6 +143,8 @@ class Main_GBEVplanState extends State<MainGBEVplan> {
     return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
       return MaterialApp(
+        navigatorKey: navigatorKey,
+
         title: 'Flutter Demo',
         theme: ThemeData(
             useMaterial3: true,
@@ -98,7 +171,8 @@ class Main_GBEVplanState extends State<MainGBEVplan> {
           '/home': (context) => const Home(),
           '/home/settings': (context) => const HomeSettings(),
           '/home/news': (context) => const HomeNews(),
-          '/home/ogtt': (context) => const HomeOGTimeTable()
+          '/home/ogtt': (context) => const HomeOGTimeTable(),
+          '/PAGE_TEST': (context) => const PAGE_TEST(),
         },
       );
     });

@@ -5,6 +5,7 @@ import {Builder, By, until} from "selenium-webdriver";
 import {Options} from "selenium-webdriver/chrome";
 import * as admin from "firebase-admin";
 import {log} from "firebase-functions/logger";
+import {Message} from "firebase-admin/lib/messaging/messaging-api";
 
 // Firebase Admin SDK initialisieren
 admin.initializeApp();
@@ -85,24 +86,26 @@ async function uuidFunction(): Promise<number[]> {
     counter++;
   }
 
-  if (uuids.length != 0) {
+  if (uuids.length > 0) {
     // ---- THIS DID NOT WORK ---- unessesary don't use it again
-    // const previousUUIDS: string[] = [];
-    // try {
-    //   const snapshot = await admin.database().ref("/URL").once("value");
-    //   snapshot.forEach((childSnapshot) => {
-    //     const uuid = childSnapshot.child("uuid").val();
-    //     if (uuid) {
-    //       previousUUIDS.push(uuid);
-    //     }
-    //   });
-    // } catch (error) {
-    //   log("E R R O R : " + error);
-    // }
-    // TODO: Is this really nessecary? Cause the timestamps won't beupdated.
-    // if (!(uuids.toString() === previousUUIDS.toString())) {
+    const previousUUIDS: string[] = [];
+    try {
+      const snapshot = await admin.database().ref("/URL").once("value");
+      snapshot.forEach((childSnapshot) => {
+        const uuid = childSnapshot.child("uuid").val();
+        if (uuid) {
+          previousUUIDS.push(uuid);
+        }
+      });
+    } catch (error) {
+      log("E R R O R : " + error);
+    }
     await saveUUIDsToDatabase(uuids);
-    // }
+    log(uuids.toString() != previousUUIDS.toString() +
+    " -> if true, sending notification");
+    if (uuids.toString() != previousUUIDS.toString()) {
+      sendNotification(uuids);
+    }
   }
   const endtime = Date.now();
   return [starttime, endtime];
@@ -164,4 +167,29 @@ async function saveUUIDsToDatabase(uuids: string[]): Promise<void> {
       log(error);
     });
   }
+}
+
+/**
+ * Takes the uuids and sends them with the notification
+ * @param {string[]} uuids
+ */
+async function sendNotification(uuids:string[]) {
+  const message:Message = {
+    notification: {
+      title: "New VPlan",
+      body: "new data",
+    },
+    data: {
+      uuids: uuids.toString(),
+    },
+    topic: "everyone",
+    android: {
+      notification: {
+        icon: "https://cdn.discordapp.com/attachments/1131545299291222037/1252956973335318559/Frame_6.png?ex=66741a9d&is=6672c91d&hm=559603924d4e07a5bbc4add388a4b8687438a1914be81d599df6246685e62215&",
+      },
+    },
+  };
+  await admin.messaging().send(message).catch((error) => {
+    log(`Error: ${error}`);
+  });
 }
