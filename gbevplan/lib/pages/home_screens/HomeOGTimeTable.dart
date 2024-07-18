@@ -21,16 +21,6 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
   void initState() {
     super.initState();
     _fetchData();
-    // FirebaseDatabase.instance.ref("/URL").onChildChanged.forEach((event) {
-    //   final data = event.snapshot.value as List<dynamic>;
-    //   setState(() {
-    //     uuidList = data
-    //         .map((item) => (item as Map<dynamic, dynamic>)['uuid'] as String)
-    //         .toList();
-    //     updateSide();
-    //   });
-    // }).catchError((error) =>
-    //     {print('An Error occoured: $error'), Navigator.pop(context)});
   }
 
   void _fetchData() {
@@ -42,9 +32,7 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
             .toList();
         updateSide(false);
       });
-      // ignore: invalid_return_type_for_catch_error
-    }).catchError((error) =>
-        {print('An Error occoured: $error'), Navigator.pop(context)});
+    });
   }
 
   void updateSide(bool hapticfeedback) async {

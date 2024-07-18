@@ -15,13 +15,13 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    progress_controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..addListener(() {
-        setState(() {});
-      });
-    progress_controller.animateTo(1);
+    // progress_controller = AnimationController(
+    //   duration: const Duration(seconds: 2),
+    //   vsync: this,
+    // )..addListener(() {
+    //     setState(() {});
+    //   });
+    // progress_controller.animateTo(1);
     super.initState();
   }
 
@@ -38,13 +38,13 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: LinearProgressIndicator(
-            value: progress_controller.value,
-            borderRadius: BorderRadius.circular(100),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(vertical: 16),
+        //   child: LinearProgressIndicator(
+        //     value: progress_controller.value,
+        //     borderRadius: BorderRadius.circular(100),
+        //   ),
+        // ),
         SegmentedButton<String>(
             selectedIcon: const Icon(
               Icons.check,

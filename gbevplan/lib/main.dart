@@ -12,16 +12,15 @@ import 'package:gbevplan/pages/home_screens/HomeNews.dart';
 import 'package:gbevplan/pages/home_screens/HomeOGTimeTable.dart';
 import 'package:gbevplan/pages/home_screens/HomeSettings.dart';
 import 'package:gbevplan/pages/login.dart';
-import 'package:gbevplan/pages/test.dart';
+import 'package:gbevplan/pages/setup_screens/SetupTuto.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("ON BACKGROUNDMESSAGE");
-  // navigatorKey.currentState?.pushNamed("/PAGE_TEST",
-  //     arguments: "YOU GOT A NOTIFICATION WHILE THE APP WAS CLOSED");
   print(message.notification?.title);
 
   // TODO: Process the new data
@@ -44,6 +43,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // HIVE initialization
+  await Hive.initFlutter();
+  await Hive.openBox("appdata").then((box) => {
+        if (box.isEmpty) {appInit()}
+      });
+
   // Local Notification
   await AwesomeNotifications().initialize(null, [
     NotificationChannel(
@@ -62,16 +67,16 @@ void main() async {
   }
 
   // F I R E B A S E - M E S S A G I N G
-  await FirebaseMessaging.instance.requestPermission(
-      // alert: true,
-      // announcement: false,
-      // badge: true,
-      // carPlay: false,
-      // criticalAlert: false,
-      // provisional: false,
-      // sound: true,
-      );
-  FirebaseMessaging.instance.subscribeToTopic("everyone");
+  // await FirebaseMessaging.instance.requestPermission(
+  //     // alert: true,
+  //     // announcement: false,
+  //     // badge: true,
+  //     // carPlay: false,
+  //     // criticalAlert: false,
+  //     // provisional: false,
+  //     // sound: true,
+  //     );
+  // FirebaseMessaging.instance.subscribeToTopic("everyone");
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("ON MESSAGE");
@@ -101,15 +106,33 @@ void main() async {
   runApp(const MainGBEVplan());
 }
 
+Future<void> appInit() async {
+  print("app init");
+  FirebaseMessaging.instance.subscribeToTopic("everyone");
+  var appdataBOX = Hive.box("appdata");
+  appdataBOX.put("rememberme", false);
+  appdataBOX.put("username", null);
+  appdataBOX.put("password", null);
+  String ttbyear = "";
+  await FirebaseDatabase.instance
+      .ref('/data/ttbyear')
+      .once()
+      .then((DatabaseEvent event) {
+    ttbyear = event.snapshot.value as String;
+  });
+  appdataBOX.put("ttbyear", ttbyear);
+  appdataBOX.put("schulstufe", null);
+  appdataBOX.put("initBoot", true);
+}
+
 class MainGBEVplan extends StatefulWidget {
   const MainGBEVplan({super.key});
 
   @override
-  State<MainGBEVplan> createState() => Main_GBEVplanState();
+  State<MainGBEVplan> createState() => MainGBEVplanState();
 }
 
-// ignore: camel_case_types
-class Main_GBEVplanState extends State<MainGBEVplan> {
+class MainGBEVplanState extends State<MainGBEVplan> {
   @override
   void initState() {
     super.initState();
@@ -136,6 +159,15 @@ class Main_GBEVplanState extends State<MainGBEVplan> {
         .call()
         .then((value) => {print("C A L L E D")})
         .onError((e, s) => {print(e)});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    // // set to false, when completed setup tuto
+    // var appdataBOX = Hive.box("appdata");
+    // appdataBOX.put("initBoot", false);
   }
 
   @override
@@ -172,7 +204,7 @@ class Main_GBEVplanState extends State<MainGBEVplan> {
           '/home/settings': (context) => const HomeSettings(),
           '/home/news': (context) => const HomeNews(),
           '/home/ogtt': (context) => const HomeOGTimeTable(),
-          '/PAGE_TEST': (context) => const PAGE_TEST(),
+          '/setuptuto': (context) => const SetupTuto(),
         },
       );
     });
