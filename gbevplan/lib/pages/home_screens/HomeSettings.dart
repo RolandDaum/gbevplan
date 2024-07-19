@@ -1,4 +1,3 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,7 +15,6 @@ class HomeSettingsState extends State<HomeSettings> {
 
   @override
   void deactivate() {
-    // TODO: implement deactivate
     super.deactivate();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -41,16 +39,28 @@ class HomeSettingsState extends State<HomeSettings> {
               child: ListView(
                 children: [
                   ListTile(
-                    enableFeedback: true,
-                    // enabled: false,
-                    leading: const Icon(Icons.contrast_rounded),
-                    title: const Text("Dark Mode"),
-                    trailing: Switch(value: true, onChanged: (value) {}),
-                  ),
+                      enableFeedback: true,
+                      leading: const Icon(Icons.calendar_view_week_rounded),
+                      title: const Text("Edit timetable"),
+                      onTap: () => {
+                            Navigator.pushNamed(
+                                context, "/home/settings/editttb")
+                          }),
                   const Divider(
                     indent: 16,
                     endIndent: 16,
-                  )
+                  ),
+                  // ListTile(
+                  //   enableFeedback: true,
+                  //   // enabled: false,
+                  //   leading: const Icon(Icons.contrast_rounded),
+                  //   title: const Text("Dark Mode"),
+                  //   trailing: Switch(value: true, onChanged: (value) {}),
+                  // ),
+                  // const Divider(
+                  //   indent: 16,
+                  //   endIndent: 16,
+                  // )
                 ],
               ),
             ),

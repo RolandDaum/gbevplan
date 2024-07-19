@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   awesome_notifications
+  cloud_firestore
   dynamic_color
   firebase_core
 )

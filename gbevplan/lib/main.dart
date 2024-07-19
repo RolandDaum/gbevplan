@@ -11,6 +11,7 @@ import 'package:gbevplan/pages/Home.dart';
 import 'package:gbevplan/pages/home_screens/HomeNews.dart';
 import 'package:gbevplan/pages/home_screens/HomeOGTimeTable.dart';
 import 'package:gbevplan/pages/home_screens/HomeSettings.dart';
+import 'package:gbevplan/pages/home_screens/settings_screens/Editttb.dart';
 import 'package:gbevplan/pages/login.dart';
 import 'package:gbevplan/pages/setup_screens/SetupTuto.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -154,11 +155,11 @@ class MainGBEVplanState extends State<MainGBEVplan> {
         DateTime.now().millisecondsSinceEpoch - (5 * 60 * 1000))) {
       return;
     }
-    await FirebaseFunctions.instanceFor(region: 'us-central1')
-        .httpsCallable('UUIDFunctionOnCall')
-        .call()
-        .then((value) => {print("C A L L E D")})
-        .onError((e, s) => {print(e)});
+    // await FirebaseFunctions.instanceFor(region: 'us-central1')
+    //     .httpsCallable('UUIDFunctionOnCall')
+    //     .call()
+    //     .then((value) => {print("C A L L E D")})
+    //     .onError((e, s) => {print(e)});
   }
 
   @override
@@ -202,6 +203,7 @@ class MainGBEVplanState extends State<MainGBEVplan> {
           '/': (context) => const page_login(),
           '/home': (context) => const Home(),
           '/home/settings': (context) => const HomeSettings(),
+          '/home/settings/editttb': (context) => const Editttb(),
           '/home/news': (context) => const HomeNews(),
           '/home/ogtt': (context) => const HomeOGTimeTable(),
           '/setuptuto': (context) => const SetupTuto(),
