@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+import 'package:restart_app/restart_app.dart';
 
 class HomeSettings extends StatefulWidget {
   const HomeSettings({
@@ -12,6 +14,16 @@ class HomeSettings extends StatefulWidget {
 
 class HomeSettingsState extends State<HomeSettings> {
   late BuildContext globContext;
+  late Box appdataBox;
+  late String initThemeMode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    appdataBox = Hive.box("appdata");
+    initThemeMode = appdataBox.get("thememode");
+  }
 
   @override
   void deactivate() {
@@ -39,28 +51,72 @@ class HomeSettingsState extends State<HomeSettings> {
               child: ListView(
                 children: [
                   ListTile(
-                      enableFeedback: true,
                       leading: const Icon(Icons.calendar_view_week_rounded),
                       title: const Text("Edit timetable"),
+                      minTileHeight: 72,
                       onTap: () => {
                             Navigator.pushNamed(
                                 context, "/home/settings/editttb")
                           }),
-                  const Divider(
-                    indent: 16,
-                    endIndent: 16,
-                  ),
-                  // ListTile(
-                  //   enableFeedback: true,
-                  //   // enabled: false,
-                  //   leading: const Icon(Icons.contrast_rounded),
-                  //   title: const Text("Dark Mode"),
-                  //   trailing: Switch(value: true, onChanged: (value) {}),
-                  // ),
                   // const Divider(
                   //   indent: 16,
                   //   endIndent: 16,
-                  // )
+                  // ),
+                  ListTile(
+                      leading: const Icon(Icons.color_lens_rounded),
+                      title: const Text("Change seed color"),
+                      minTileHeight: 72,
+                      onTap: () => {
+                            Navigator.pushNamed(
+                                context, "/home/settings/changeseedcolor")
+                          }),
+                  // const Divider(
+                  //   indent: 16,
+                  //   endIndent: 16,
+                  // ),
+                  ListTile(
+                      leading: const Icon(Icons.brightness_4_rounded),
+                      minTileHeight: 72,
+                      trailing: DropdownMenu(
+                          onSelected: (value) {
+                            appdataBox.put("thememode", value);
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      icon:
+                                          const Icon(Icons.restart_alt_rounded),
+                                      title: const Text("restart"),
+                                      content: const Text(
+                                          "Do you want to restart the app now, in order to apply the new color mode?"),
+                                      actions: [
+                                        MaterialButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, true);
+                                          },
+                                          child: Text("No"),
+                                        ),
+                                        MaterialButton(
+                                          onPressed: () {
+                                            Restart.restartApp();
+                                          },
+                                          child: Text("Yes"),
+                                        )
+                                      ],
+                                    ));
+                            // Restart.restartApp();
+                          },
+                          initialSelection: initThemeMode,
+                          dropdownMenuEntries: const [
+                            DropdownMenuEntry(value: "dark", label: "dark"),
+                            DropdownMenuEntry(value: "light", label: "light"),
+                            DropdownMenuEntry(value: "system", label: "system"),
+                          ]),
+                      title: const Text("Change color mode"),
+                      onTap: () => {}),
+                  // const Divider(
+                  //   indent: 16,
+                  //   endIndent: 16,
+                  // ),
                 ],
               ),
             ),

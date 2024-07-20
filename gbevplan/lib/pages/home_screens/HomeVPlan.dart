@@ -45,66 +45,66 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
         //     borderRadius: BorderRadius.circular(100),
         //   ),
         // ),
-        SegmentedButton<String>(
-            selectedIcon: const Icon(
-              Icons.check,
-              size: 0,
-            ),
-            multiSelectionEnabled: false,
-            // Ich kann mit ButtonSegment<T> ein Object in den Buttons abspeichern -> Die Tagespläne
-            segments: const <ButtonSegment<String>>[
-              ButtonSegment(
-                  value: "Button 1",
-                  label: Text('Mo'),
-                  icon: Icon(
-                    Icons.calendar_view_day,
-                    size: 0,
-                  )),
-              ButtonSegment(
-                  value: "Button 2",
-                  label: Text('Di'),
-                  icon: Icon(
-                    Icons.calendar_view_day,
-                    size: 0,
-                  )),
-              ButtonSegment(
-                  value: "Button 3",
-                  label: Text('Mi'),
-                  icon: Icon(
-                    Icons.calendar_view_day,
-                    size: 0,
-                  )),
-              ButtonSegment(
-                  value: "Button 4",
-                  label: Text('Do'),
-                  icon: Icon(
-                    Icons.calendar_view_day,
-                    size: 0,
-                  )),
-              ButtonSegment(
-                  value: "Button 5",
-                  label: Text('Fr'),
-                  icon: Icon(
-                    Icons.calendar_view_day,
-                    size: 0,
-                  )),
-            ],
-            selected: <String>{currentSelection},
-            onSelectionChanged: (Set<String> newSelection) {
-              setState(() {
-                currentSelection = newSelection.first;
-              });
-            }),
-        const Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: TimeTableEntry(
-            stunde: "stunde",
-            raum: "raum",
-            fach: "fach",
-            stfach: "st. fach",
-            stfachLineThrough: false,
-            headline: true,
-          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: SegmentedButton<String>(
+              selectedIcon: const Icon(
+                Icons.check,
+                size: 0,
+              ),
+              multiSelectionEnabled: false,
+              // Ich kann mit ButtonSegment<T> ein Object in den Buttons abspeichern -> Die Tagespläne
+              segments: const <ButtonSegment<String>>[
+                ButtonSegment(
+                    value: "Button 1",
+                    label: Text('Mo'),
+                    icon: Icon(
+                      Icons.calendar_view_day,
+                      size: 0,
+                    )),
+                ButtonSegment(
+                    value: "Button 2",
+                    label: Text('Di'),
+                    icon: Icon(
+                      Icons.calendar_view_day,
+                      size: 0,
+                    )),
+                ButtonSegment(
+                    value: "Button 3",
+                    label: Text('Mi'),
+                    icon: Icon(
+                      Icons.calendar_view_day,
+                      size: 0,
+                    )),
+                ButtonSegment(
+                    value: "Button 4",
+                    label: Text('Do'),
+                    icon: Icon(
+                      Icons.calendar_view_day,
+                      size: 0,
+                    )),
+                ButtonSegment(
+                    value: "Button 5",
+                    label: Text('Fr'),
+                    icon: Icon(
+                      Icons.calendar_view_day,
+                      size: 0,
+                    )),
+              ],
+              selected: <String>{currentSelection},
+              onSelectionChanged: (Set<String> newSelection) {
+                setState(() {
+                  currentSelection = newSelection.first;
+                });
+              }),
+        ),
+        const TimeTableEntry(
+          stunde: "stunde",
+          raum: "raum",
+          fach: "fach",
+          stfach: "st. fach",
+          stfachLineThrough: false,
+          headline: true,
         ),
         const Divider(),
         Expanded(

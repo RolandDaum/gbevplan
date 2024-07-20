@@ -1,5 +1,4 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,6 +10,7 @@ import 'package:gbevplan/pages/Home.dart';
 import 'package:gbevplan/pages/home_screens/HomeNews.dart';
 import 'package:gbevplan/pages/home_screens/HomeOGTimeTable.dart';
 import 'package:gbevplan/pages/home_screens/HomeSettings.dart';
+import 'package:gbevplan/pages/home_screens/settings_screens/ChangeSeedColor.dart';
 import 'package:gbevplan/pages/home_screens/settings_screens/Editttb.dart';
 import 'package:gbevplan/pages/login.dart';
 import 'package:gbevplan/pages/setup_screens/SetupTuto.dart';
@@ -112,8 +112,8 @@ Future<void> appInit() async {
   FirebaseMessaging.instance.subscribeToTopic("everyone");
   var appdataBOX = Hive.box("appdata");
   appdataBOX.put("rememberme", false);
-  appdataBOX.put("username", null);
-  appdataBOX.put("password", null);
+  // await appdataBOX.put("username", null);
+  // await appdataBOX.put("password", null);
   String ttbyear = "";
   await FirebaseDatabase.instance
       .ref('/data/ttbyear')
@@ -124,6 +124,7 @@ Future<void> appInit() async {
   appdataBOX.put("ttbyear", ttbyear);
   appdataBOX.put("schulstufe", null);
   appdataBOX.put("initBoot", true);
+  appdataBOX.put("thememode", "system");
 }
 
 class MainGBEVplan extends StatefulWidget {
@@ -134,10 +135,35 @@ class MainGBEVplan extends StatefulWidget {
 }
 
 class MainGBEVplanState extends State<MainGBEVplan> {
+  bool savedSeedColor = false;
+  late Box appdataBox;
+  late ThemeMode loadedThemeMode;
+
   @override
   void initState() {
     super.initState();
     _callFunction();
+
+    appdataBox = Hive.box("appdata");
+    if (appdataBox.get("seedcolor_red") != null) {
+      savedSeedColor = true;
+    }
+
+    // print(appdataBox.get("thememode") as String);
+    switch (appdataBox.get("thememode").toString()) {
+      case "light":
+        loadedThemeMode = ThemeMode.light;
+        break;
+      case "dart":
+        loadedThemeMode = ThemeMode.dark;
+        break;
+      case "system":
+        loadedThemeMode = ThemeMode.system;
+        break;
+      default:
+        loadedThemeMode = ThemeMode.system;
+        break;
+    }
   }
 
   void _callFunction() async {
@@ -183,19 +209,29 @@ class MainGBEVplanState extends State<MainGBEVplan> {
             useMaterial3: true,
             brightness: Brightness.light,
             fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
-            // colorScheme: ColorScheme.highContrastLight(),
-            colorSchemeSeed: lightDynamic != null
-                ? lightDynamic.primary
-                : const Color(0xFF002A68)),
+            colorSchemeSeed: savedSeedColor
+                ? Color.fromRGBO(
+                    appdataBox.get("seedcolor_red"),
+                    appdataBox.get("seedcolor_green"),
+                    appdataBox.get("seedcolor_blue"),
+                    1)
+                : lightDynamic != null
+                    ? lightDynamic.primary
+                    : const Color(0xFF002A68)),
         darkTheme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.dark,
             fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
-            // colorScheme: const ColorScheme.highContrastDark(),
-            colorSchemeSeed: darkDynamic != null
-                ? darkDynamic.primary
-                : const Color(0xFF002A68)),
-        themeMode: ThemeMode.system,
+            colorSchemeSeed: savedSeedColor
+                ? Color.fromRGBO(
+                    appdataBox.get("seedcolor_red"),
+                    appdataBox.get("seedcolor_green"),
+                    appdataBox.get("seedcolor_blue"),
+                    1)
+                : darkDynamic != null
+                    ? darkDynamic.primary
+                    : const Color(0xFF002A68)),
+        themeMode: loadedThemeMode,
         debugShowCheckedModeBanner: false,
         // debugShowMaterialGrid: true,
         initialRoute: '/',
@@ -204,6 +240,8 @@ class MainGBEVplanState extends State<MainGBEVplan> {
           '/home': (context) => const Home(),
           '/home/settings': (context) => const HomeSettings(),
           '/home/settings/editttb': (context) => const Editttb(),
+          '/home/settings/changeseedcolor': (context) =>
+              const Changeseedcolor(),
           '/home/news': (context) => const HomeNews(),
           '/home/ogtt': (context) => const HomeOGTimeTable(),
           '/setuptuto': (context) => const SetupTuto(),
