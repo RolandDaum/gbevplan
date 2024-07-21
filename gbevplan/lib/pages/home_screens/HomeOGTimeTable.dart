@@ -90,30 +90,26 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          GestureDetector(
-            onTap: () async {
-              setState(() {
-                selectedUUID = (selectedUUID - 1 < 0)
-                    ? (uuidList.length - 1)
-                    : (selectedUUID - 1);
-                updateSide(true);
-              });
-            },
-            child: const Icon(Icons.arrow_back_ios_rounded),
-          ),
-          const SizedBox(width: 16),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedUUID = (selectedUUID + 1 >= uuidList.length)
-                    ? 0
-                    : (selectedUUID + 1);
-                updateSide(true);
-              });
-            },
-            child: const Icon(Icons.arrow_forward_ios_rounded),
-          ),
-          const SizedBox(width: 16),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  selectedUUID = (selectedUUID - 1 < 0)
+                      ? (uuidList.length - 1)
+                      : (selectedUUID - 1);
+                  updateSide(true);
+                });
+              },
+              icon: const Icon(Icons.arrow_back_ios_rounded)),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  selectedUUID = (selectedUUID + 1 >= uuidList.length)
+                      ? 0
+                      : (selectedUUID + 1);
+                  updateSide(true);
+                });
+              },
+              icon: const Icon(Icons.arrow_forward_ios_rounded))
         ],
         systemOverlayStyle: SystemUiOverlayStyle(
             // If the scafflod uses an appBar, the system Overlay Style has to be declerated in it else just do it over chromeoption thing what ever, befor returning inside the build method

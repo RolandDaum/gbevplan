@@ -2,9 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gbevplan/components/EmptyWidget.dart';
-import 'package:gbevplan/tmp.dart';
 import 'package:hive/hive.dart';
 
 class Editttb extends StatefulWidget {
@@ -15,7 +13,6 @@ class Editttb extends StatefulWidget {
 }
 
 class _EditttbState extends State<Editttb> {
-  late BuildContext globContext;
   TextEditingController tecJahrgangSelection = TextEditingController();
   TextEditingController tecKursSelection = TextEditingController();
   int jahrgang = 0;
@@ -157,21 +154,10 @@ class _EditttbState extends State<Editttb> {
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor:
-            Theme.of(globContext).colorScheme.surfaceContainer));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    globContext = context;
     return Scaffold(
         appBar: AppBar(
-          scrolledUnderElevation: 0,
-          title: const Text("Edit Timetable"),
+          title: const Text("edit timetable"),
           systemOverlayStyle: SystemUiOverlayStyle(
               systemNavigationBarColor: Theme.of(context).colorScheme.surface),
         ),
@@ -245,7 +231,7 @@ class _EditttbState extends State<Editttb> {
           jahrgang != 0
               ? Expanded(
                   child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  padding: const EdgeInsets.symmetric(horizontal: 34),
                   child: ListView.builder(
                       itemCount: selectedKurse.length,
                       itemBuilder: (context, index) {
@@ -263,10 +249,11 @@ class _EditttbState extends State<Editttb> {
                               ),
                               title: Text(selectedKurse[index]),
                             ),
-                            const Divider(
-                              indent: 16,
-                              endIndent: 16,
-                            ),
+                            index != selectedKurse.length - 1
+                                ? const Divider(
+                                    height: 2,
+                                  )
+                                : EmptyWidget()
                           ],
                         );
                       }),
@@ -275,23 +262,3 @@ class _EditttbState extends State<Editttb> {
         ]));
   }
 }
-
-//Padding(
-//   padding: const EdgeInsets.symmetric(
-//       vertical: 10, horizontal: 40),
-//   child: Row(
-//     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//     children: [
-//       Text(selectedKurse[index]),
-//       GestureDetector(
-//         child: const Icon(Icons.close_rounded),
-//         onTap: () {
-//           setState(() {
-//             allekurse.add(selectedKurse[index]);
-//             selectedKurse.removeAt(index);
-//           });
-//         },
-//       )
-//     ],
-//   ),
-// );

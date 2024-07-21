@@ -58,10 +58,6 @@ class HomeSettingsState extends State<HomeSettings> {
                             Navigator.pushNamed(
                                 context, "/home/settings/editttb")
                           }),
-                  // const Divider(
-                  //   indent: 16,
-                  //   endIndent: 16,
-                  // ),
                   ListTile(
                       leading: const Icon(Icons.color_lens_rounded),
                       title: const Text("Change seed color"),
@@ -70,10 +66,6 @@ class HomeSettingsState extends State<HomeSettings> {
                             Navigator.pushNamed(
                                 context, "/home/settings/changeseedcolor")
                           }),
-                  // const Divider(
-                  //   indent: 16,
-                  //   endIndent: 16,
-                  // ),
                   ListTile(
                       leading: const Icon(Icons.brightness_4_rounded),
                       minTileHeight: 72,
@@ -113,10 +105,6 @@ class HomeSettingsState extends State<HomeSettings> {
                           ]),
                       title: const Text("Change color mode"),
                       onTap: () => {}),
-                  // const Divider(
-                  //   indent: 16,
-                  //   endIndent: 16,
-                  // ),
                 ],
               ),
             ),

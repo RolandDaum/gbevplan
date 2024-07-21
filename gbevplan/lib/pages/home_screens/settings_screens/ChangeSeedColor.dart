@@ -11,7 +11,6 @@ class Changeseedcolor extends StatefulWidget {
 }
 
 class _ChangeseedcolorState extends State<Changeseedcolor> {
-  late BuildContext globContext;
   double redValue = 0;
   double greenValue = 0;
   double blueValue = 0;
@@ -75,21 +74,10 @@ class _ChangeseedcolorState extends State<Changeseedcolor> {
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor:
-            Theme.of(globContext).colorScheme.surfaceContainer));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    globContext = context;
-
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Change seed color"),
+          title: const Text("seed color"),
           actions: [
             IconButton(
                 onPressed: () {
