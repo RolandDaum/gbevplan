@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:gbevplan/components/BottomSheetLesson.dart';
-import 'package:gbevplan/components/TimeTableEntry.dart';
+import 'package:gbevplan/script.dart';
+import 'package:gbevplan/components/bottomsheet_lesson.dart';
+import 'package:gbevplan/components/timetable_entry.dart';
 import 'package:hive/hive.dart';
 
 class HomeVPlan extends StatefulWidget {
@@ -13,6 +14,7 @@ class HomeVPlan extends StatefulWidget {
 }
 
 class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
+  late Box appdataBox;
   int _subjSelecIndex = 0;
 
   int currentWDSelection = 0;
@@ -23,23 +25,31 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    // print("W E E K D A Y  -  " + DateTime.now().weekday.toString());
-
     setCurrentTime();
     getTimeTable();
   }
 
   void getTimeTable() async {
+    appdataBox = Hive.box("appdata");
+    String ttbyear = "";
+    await FirebaseDatabase.instance
+        .ref('/data/ttbyear')
+        .once()
+        .then((DatabaseEvent event) {
+      ttbyear = event.snapshot.value as String;
+    });
+    int jahrgang = appdataBox.get("jahrgang");
+    // print(Scripts.jhginttostring(jahrgang));
     // Wochentag -> Stunde -> Kurs: Raum
     FirebaseFirestore db = FirebaseFirestore.instance;
     db.databaseId = "database";
     await db
-        .collection('2023-24-2')
-        .doc('oberstufe')
-        .collection('12_timetable')
+        .collection(ttbyear)
+        .doc(Scripts.jhginttostring(jahrgang))
+        .collection('${jahrgang}_timetable')
         .get()
         .then((value) {
-      value.docs.forEach((weekdayDOC) {
+      for (var weekdayDOC in value.docs) {
         int weekday = int.parse(weekdayDOC.id);
         timetable[weekday] = {};
 
@@ -47,15 +57,9 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
           int lessonHour = int.parse(lesson);
           timetable[weekday]![lessonHour] = courseMap;
         });
-      });
+      }
     });
     calcPersonalTTBLday();
-    //                      Montag          1. Stunde             1. Kurs  Kursname
-    // print(timetable.entries.first.value.entries.first.value.entries.first.key);
-    //                      Montag          1. Stunde             1. Kurs  Raum
-    // print(
-    //     timetable.entries.first.value.entries.first.value.entries.first.value);
-    // print(timetable[0]![0]!.entries.last.value);
   }
 
   void calcPersonalTTBLday() {
@@ -205,104 +209,112 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
         ),
         const Divider(),
         Expanded(
-          child: ListView.builder(
-              itemCount: personalTimeTableDAY.isNotEmpty
-                  ? personalTimeTableDAY.length
-                  : 11,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () => {
-                        if (index == _subjSelecIndex)
-                          {
-                            showModalBottomSheet(
-                                isScrollControlled:
-                                    false, // if enabled -> Bottom Sheet becomes full screen sheet
-                                scrollControlDisabledMaxHeightRatio: .5,
-                                showDragHandle: true,
-                                enableDrag: true,
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const BottomSheeetLesson();
-                                }).then((value) {
-                              SystemChrome.setSystemUIOverlayStyle(
-                                  SystemUiOverlayStyle(
-                                      systemNavigationBarColor:
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .surfaceContainer));
-                            }),
-                            SystemChrome.setSystemUIOverlayStyle(
-                                SystemUiOverlayStyle(
-                                    systemNavigationBarColor: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainerLow))
-                          }
-                      },
-                      onDoubleTap: () {
-                        showModalBottomSheet(
-                            isScrollControlled:
-                                false, // if enabled -> Bottom Sheet becomes full screen sheet
-                            scrollControlDisabledMaxHeightRatio: .5,
-                            showDragHandle: true,
-                            enableDrag: true,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const BottomSheeetLesson();
-                            }).then((value) {
-                          SystemChrome.setSystemUIOverlayStyle(
-                              SystemUiOverlayStyle(
-                                  systemNavigationBarColor: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainer));
-                        });
-                        SystemChrome.setSystemUIOverlayStyle(
-                            SystemUiOverlayStyle(
-                                systemNavigationBarColor: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerLow));
-                        // }
-                      },
-                      child: Card.filled(
-                        color: index == _subjSelecIndex
-                            ? Theme.of(context).colorScheme.surfaceContainerLow
-                            : Colors.transparent,
-                        child: Padding(
-                          padding: index == _subjSelecIndex
-                              ? const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 16)
-                              : const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                          child: TimeTableEntry(
-                            stunde: (index + 1).toString(),
-                            raum: personalTimeTableDAY.isNotEmpty
-                                ? personalTimeTableDAY[index]![0]
-                                : "---",
-                            fach: personalTimeTableDAY.isNotEmpty
-                                ? personalTimeTableDAY[index]![1]
-                                : "---",
-                            stfach: "empty",
-                            highlighted:
-                                index == _subjSelecIndex ? true : false,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              getTimeTable();
+            },
+            child: ListView.builder(
+                itemCount: personalTimeTableDAY.isNotEmpty
+                    ? personalTimeTableDAY.length
+                    : 11,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () => {
+                          if (index == _subjSelecIndex)
+                            {
+                              showModalBottomSheet(
+                                  isScrollControlled:
+                                      false, // if enabled -> Bottom Sheet becomes full screen sheet
+                                  scrollControlDisabledMaxHeightRatio: .5,
+                                  showDragHandle: true,
+                                  enableDrag: true,
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const BottomSheeetLesson();
+                                  }).then((value) {
+                                // SystemChrome.setSystemUIOverlayStyle(
+                                //     SystemUiOverlayStyle(
+                                //         systemNavigationBarColor:
+                                //             Theme.of(context)
+                                //                 .colorScheme
+                                //                 .surfaceContainer));
+                              }),
+                              // SystemChrome.setSystemUIOverlayStyle(
+                              //     SystemUiOverlayStyle(
+                              //         systemNavigationBarColor:
+                              //             Theme.of(context)
+                              //                 .colorScheme
+                              //                 .surfaceContainerLow))
+                            }
+                        },
+                        onDoubleTap: () {
+                          showModalBottomSheet(
+                              isScrollControlled:
+                                  false, // if enabled -> Bottom Sheet becomes full screen sheet
+                              scrollControlDisabledMaxHeightRatio: .5,
+                              showDragHandle: true,
+                              enableDrag: true,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const BottomSheeetLesson();
+                              }).then((value) {
+                            // SystemChrome.setSystemUIOverlayStyle(
+                            //     SystemUiOverlayStyle(
+                            //         systemNavigationBarColor: Theme.of(context)
+                            //             .colorScheme
+                            //             .surfaceContainer));
+                          });
+                          // SystemChrome.setSystemUIOverlayStyle(
+                          //     SystemUiOverlayStyle(
+                          //         systemNavigationBarColor: Theme.of(context)
+                          //             .colorScheme
+                          //             .surfaceContainerLow));
+                          // }
+                        },
+                        child: Card.filled(
+                          color: index == _subjSelecIndex
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerLow
+                              : Colors.transparent,
+                          child: Padding(
+                            padding: index == _subjSelecIndex
+                                ? const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16)
+                                : const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                            child: TimeTableEntry(
+                              stunde: (index + 1).toString(),
+                              raum: personalTimeTableDAY.isNotEmpty
+                                  ? personalTimeTableDAY[index]![0]
+                                  : "---",
+                              fach: personalTimeTableDAY.isNotEmpty
+                                  ? personalTimeTableDAY[index]![1]
+                                  : "---",
+                              stfach: "",
+                              highlighted:
+                                  index == _subjSelecIndex ? true : false,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    index == 11 - 1 ||
-                            index == _subjSelecIndex - 1 ||
-                            index == _subjSelecIndex
-                        ? const Divider(
-                            height: 0,
-                            color: Colors.transparent,
-                          )
-                        : const Divider(
-                            indent: 20,
-                            endIndent: 20,
-                          )
-                  ],
-                );
-              }),
+                      index == 11 - 1 ||
+                              index == _subjSelecIndex - 1 ||
+                              index == _subjSelecIndex
+                          ? const Divider(
+                              height: 0,
+                              color: Colors.transparent,
+                            )
+                          : const Divider(
+                              indent: 20,
+                              endIndent: 20,
+                            )
+                    ],
+                  );
+                }),
+          ),
         ),
       ]),
     );

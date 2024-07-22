@@ -12,8 +12,6 @@ class HomeOGTimeTable extends StatefulWidget {
 }
 
 class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
-  late BuildContext globContext;
-
   List<String> uuidList = List.empty();
   int selectedUUID = 0;
 
@@ -43,7 +41,7 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
         .ref('/credentials/suuid')
         .once()
         .then((event) => {
-              print(event.snapshot.value.toString()),
+              // print(event.snapshot.value.toString()),
               url =
                   'https://dsbmobile.de/data/${event.snapshot.value.toString()}/${uuidList.elementAt(selectedUUID)}/${uuidList.elementAt(selectedUUID)}.htm'
             });
@@ -58,7 +56,7 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor:
-            Theme.of(globContext).colorScheme.surfaceContainer));
+            Theme.of(context).colorScheme.surfaceContainer));
   }
 
   final WebViewController _webviewController = WebViewController()
@@ -83,10 +81,6 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
 
   @override
   Widget build(BuildContext context) {
-    globContext = context;
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor: Theme.of(globContext).colorScheme.surface));
-
     return Scaffold(
       appBar: AppBar(
         actions: [

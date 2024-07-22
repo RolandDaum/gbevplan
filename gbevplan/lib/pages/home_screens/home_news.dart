@@ -11,21 +11,17 @@ class HomeNews extends StatefulWidget {
 
 // ignore: camel_case_types
 class HomeNewsState extends State<HomeNews> {
-  late BuildContext globContext;
-
   @override
   void deactivate() {
-    // TODO: implement deactivate
     super.deactivate();
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor:
-            Theme.of(globContext).colorScheme.surfaceContainer));
+            Theme.of(context).colorScheme.surfaceContainer));
   }
 
   @override
   Widget build(BuildContext context) {
-    globContext = context;
     return Scaffold(
       appBar: AppBar(
         title: const Text("news"),
@@ -33,9 +29,22 @@ class HomeNewsState extends State<HomeNews> {
             systemNavigationBarColor: Theme.of(context).colorScheme.surface),
       ),
       body: Center(
-        child: Text(
-          "N E W S",
-          style: Theme.of(context).textTheme.displayMedium,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "N E W S",
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            FilledButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, "/setuptuto");
+                },
+                child: const Text("Introduction Screen"))
+          ],
         ),
       ),
     );

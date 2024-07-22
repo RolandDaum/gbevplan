@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gbevplan/components/EmptyWidget.dart';
+import 'package:gbevplan/components/empty_widget.dart';
 import 'package:hive/hive.dart';
 
 class Editttb extends StatefulWidget {
@@ -24,10 +24,10 @@ class _EditttbState extends State<Editttb> {
     super.initState();
 
     var appdataBox = Hive.box("appdata");
-    var tmp_selectedKurse = appdataBox.get("selectedKurse");
-    tmp_selectedKurse != null ? selectedKurse = tmp_selectedKurse : {};
-    var tmp_jahrgang = appdataBox.get("jahrgang");
-    tmp_jahrgang != null ? jahrgang = tmp_jahrgang : {};
+    var tmpSelectedkurse = appdataBox.get("selectedKurse");
+    tmpSelectedkurse != null ? selectedKurse = tmpSelectedkurse : {};
+    var tmpJahrgang = appdataBox.get("jahrgang");
+    tmpJahrgang != null ? jahrgang = tmpJahrgang : {};
 
     if (jahrgang == 0) {
       return;
@@ -253,12 +253,12 @@ class _EditttbState extends State<Editttb> {
                                 ? const Divider(
                                     height: 2,
                                   )
-                                : EmptyWidget()
+                                : const EmptyWidget()
                           ],
                         );
                       }),
                 ))
-              : EmptyWidget()
+              : const EmptyWidget()
         ]));
   }
 }

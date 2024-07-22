@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gbevplan/components/EmptyWidget.dart';
-import 'package:gbevplan/pages/home_screens/HomeVPlan.dart';
+import 'package:gbevplan/components/empty_widget.dart';
+import 'package:gbevplan/pages/home_screens/home_vplan.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,20 +12,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1;
 
-  void changeSystemUIOverlayStyle(SystemUiOverlayStyle systemuioverlaystyle) {
-    setState(() {
-      SystemChrome.setSystemUIOverlayStyle(systemuioverlaystyle);
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor:
+            Theme.of(context).colorScheme.surfaceContainer));
   }
 
   @override
   Widget build(BuildContext context) {
-    changeSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.surfaceContainer));
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         elevation: 0,
@@ -33,9 +32,9 @@ class _HomeState extends State<Home> {
         enableFeedback: true,
         child: const Icon(Icons.open_in_new_outlined),
       ),
-      primary:
-          true, // Is nessesary that the body does not get under the system tray
-      appBar: EmptyWidget(), // ^^
+      // primary:
+      //     true, // Is nessesary that the body does not get under the system tray
+      appBar: const EmptyWidget(), // ^^
       body: const HomeVPlan(),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (value) => {
@@ -48,7 +47,6 @@ class _HomeState extends State<Home> {
                 break;
               case 2:
                 Navigator.of(context).pushNamed("/home/settings");
-
                 break;
             }
           })

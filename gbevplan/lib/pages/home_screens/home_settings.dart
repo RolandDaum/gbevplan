@@ -13,7 +13,6 @@ class HomeSettings extends StatefulWidget {
 }
 
 class HomeSettingsState extends State<HomeSettings> {
-  late BuildContext globContext;
   late Box appdataBox;
   late String initThemeMode;
 
@@ -31,12 +30,11 @@ class HomeSettingsState extends State<HomeSettings> {
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor:
-            Theme.of(globContext).colorScheme.surfaceContainer));
+            Theme.of(context).colorScheme.surfaceContainer));
   }
 
   @override
   Widget build(BuildContext context) {
-    globContext = context;
     return Scaffold(
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle(
@@ -85,13 +83,13 @@ class HomeSettingsState extends State<HomeSettings> {
                                           onPressed: () {
                                             Navigator.pop(context, true);
                                           },
-                                          child: Text("No"),
+                                          child: const Text("No"),
                                         ),
                                         MaterialButton(
                                           onPressed: () {
                                             Restart.restartApp();
                                           },
-                                          child: Text("Yes"),
+                                          child: const Text("Yes"),
                                         )
                                       ],
                                     ));

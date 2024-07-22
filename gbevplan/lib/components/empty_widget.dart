@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EmptyWidget extends StatelessWidget implements PreferredSizeWidget {
-  // const EmptyAppBar({super.key});
+  const EmptyWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

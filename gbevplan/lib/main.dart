@@ -6,14 +6,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/firebase_options.dart';
-import 'package:gbevplan/pages/Home.dart';
-import 'package:gbevplan/pages/home_screens/HomeNews.dart';
-import 'package:gbevplan/pages/home_screens/HomeOGTimeTable.dart';
-import 'package:gbevplan/pages/home_screens/HomeSettings.dart';
-import 'package:gbevplan/pages/home_screens/settings_screens/ChangeSeedColor.dart';
-import 'package:gbevplan/pages/home_screens/settings_screens/Editttb.dart';
+import 'package:gbevplan/pages/home.dart';
+import 'package:gbevplan/pages/home_screens/home_news.dart';
+import 'package:gbevplan/pages/home_screens/home_ogtimetable.dart';
+import 'package:gbevplan/pages/home_screens/home_settings.dart';
+import 'package:gbevplan/pages/home_screens/settings_screens/change_seedcolor.dart';
+import 'package:gbevplan/pages/home_screens/settings_screens/edit_timetable.dart';
 import 'package:gbevplan/pages/login.dart';
-import 'package:gbevplan/pages/setup_screens/SetupTuto.dart';
+import 'package:gbevplan/pages/setup_screens/setupstart_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -21,8 +21,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("ON BACKGROUNDMESSAGE");
-  print(message.notification?.title);
+  // print("ON BACKGROUNDMESSAGE");
+  // print(message.notification?.title);
 
   // TODO: Process the new data
   await Future.delayed(const Duration(seconds: 5));
@@ -80,48 +80,48 @@ void main() async {
   // FirebaseMessaging.instance.subscribeToTopic("everyone");
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("ON MESSAGE");
+    // print("ON MESSAGE");
     navigatorKey.currentState?.pushNamed("/PAGE_TEST",
         arguments: "YOU GOT A NOTIFICATION WHILE BEING INSIDE THE APP");
   });
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
-    print("ON MESSAGE opend APP");
+    // print("ON MESSAGE opend APP");
     navigatorKey.currentState
         ?.pushNamed("/PAGE_TEST", arguments: "YOU TAPPED ON THE NOTIFICATION");
   });
   FirebaseMessaging.instance.getToken().then((token) {
-    print(token);
+    // print(token);
   });
 
-  // Navigation/Notification Bar Style
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarIconBrightness:
-          WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-                  Brightness.light
-              ? Brightness.dark
-              : Brightness.light,
-    ),
-  );
+  // // Navigation/Notification Bar Style
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   SystemUiOverlayStyle(
+  //     statusBarIconBrightness:
+  //         WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+  //                 Brightness.light
+  //             ? Brightness.dark
+  //             : Brightness.light,
+  //   ),
+  // );
 
   runApp(const MainGBEVplan());
 }
 
 Future<void> appInit() async {
-  print("app init");
+  // print("app init");
   FirebaseMessaging.instance.subscribeToTopic("everyone");
   var appdataBOX = Hive.box("appdata");
   appdataBOX.put("rememberme", false);
   // await appdataBOX.put("username", null);
   // await appdataBOX.put("password", null);
-  String ttbyear = "";
-  await FirebaseDatabase.instance
-      .ref('/data/ttbyear')
-      .once()
-      .then((DatabaseEvent event) {
-    ttbyear = event.snapshot.value as String;
-  });
-  appdataBOX.put("ttbyear", ttbyear);
+  // String ttbyear = "";
+  // await FirebaseDatabase.instance
+  //     .ref('/data/ttbyear')
+  //     .once()
+  //     .then((DatabaseEvent event) {
+  //   ttbyear = event.snapshot.value as String;
+  // });
+  // appdataBOX.put("ttbyear", ttbyear);
   appdataBOX.put("schulstufe", null);
   appdataBOX.put("initBoot", true);
   appdataBOX.put("thememode", "system");
@@ -153,9 +153,13 @@ class MainGBEVplanState extends State<MainGBEVplan> {
     switch (appdataBox.get("thememode").toString()) {
       case "light":
         loadedThemeMode = ThemeMode.light;
+        SystemChrome.setSystemUIOverlayStyle(
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.light));
         break;
-      case "dart":
+      case "dark":
         loadedThemeMode = ThemeMode.dark;
+        SystemChrome.setSystemUIOverlayStyle(
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark));
         break;
       case "system":
         loadedThemeMode = ThemeMode.system;
