@@ -41,7 +41,7 @@ class HomeNewsState extends State<HomeNews> {
             ),
             FilledButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, "/setuptuto");
+                  Navigator.pushNamed(context, "/introstart");
                 },
                 child: const Text("Introduction Screen"))
           ],

@@ -31,6 +31,8 @@ class _page_loginState extends State<page_login> {
     }
   }
 
+  // ToDo: Add option for usage without login (maybe)
+  // ToDo: Add auto login functionallity
   Future<bool> login() async {
     bool valid = true;
     await FirebaseDatabase.instance
@@ -117,8 +119,8 @@ class _page_loginState extends State<page_login> {
                                       .onPrimaryContainer,
                                 );
                                 Hive.box("appdata").get("initBoot")
-                                    ? Navigator.of(context).popAndPushNamed(
-                                        '/home') // TODO: Change back to "/setuptuto" for intoductory pages
+                                    ? Navigator.of(context)
+                                        .popAndPushNamed('/introstart')
                                     : Navigator.of(context)
                                         .popAndPushNamed('/home');
                               } else {

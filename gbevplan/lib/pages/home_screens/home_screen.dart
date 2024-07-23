@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/components/empty_widget.dart';
-import 'package:gbevplan/pages/home_screens/home_vplan.dart';
+import 'package:gbevplan/pages/home_screens/home_page_vplan.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

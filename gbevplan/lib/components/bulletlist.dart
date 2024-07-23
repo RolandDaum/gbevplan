@@ -3,11 +3,18 @@ import 'package:flutter/material.dart';
 class Bulletlist extends StatelessWidget {
   final List<Bulletpoint> data;
   final String bulletpointChar;
+  TextStyle? textstyle;
 
-  const Bulletlist({super.key, required this.data, this.bulletpointChar = "•"});
+  Bulletlist(
+      {super.key,
+      required this.data,
+      this.bulletpointChar = "•",
+      this.textstyle});
 
   @override
   Widget build(BuildContext context) {
+    textstyle ??= Theme.of(context).textTheme.bodyLarge;
+
     return ListView.builder(
         shrinkWrap: true,
         itemCount: data.length,
@@ -41,14 +48,11 @@ class Bulletlist extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: Text(bulletpointChar,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(fontWeight: FontWeight.bold)),
+                      style: textstyle!.copyWith(fontWeight: FontWeight.bold)),
                 ),
                 Flexible(
                   child: Text(
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: textstyle,
                     data.elementAt(index).text,
                   ),
                 )
@@ -63,5 +67,5 @@ class Bulletpoint {
   final int indent;
   final String text;
 
-  Bulletpoint({required this.indent, required this.text});
+  Bulletpoint({this.indent = 0, required this.text});
 }

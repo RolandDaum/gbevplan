@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TimeTableEntry extends StatelessWidget {
+  // lets make this via an actual object called lesson instead of getting all these informations single handed.
   final String stunde;
   final String raum;
   final String fach;

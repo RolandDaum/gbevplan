@@ -18,7 +18,8 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
   int _subjSelecIndex = 0;
 
   int currentWDSelection = 0;
-  Map<int, Map<int, Map<String, dynamic>>> timetable = {};
+  Map<int, Map<int, Map<String, dynamic>>> timetable =
+      {}; // TODO: Make this think a fucking OBJ and your good to go. Add some functions an stuff, e.g. getTimetable, so it can all be reused!!!
   Map<int, List<String>> personalTimeTableDAY = {};
 
   @override
@@ -135,84 +136,77 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(children: [
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(vertical: 16),
-        //   child: LinearProgressIndicator(
-        //     value: progress_controller.value,
-        //     borderRadius: BorderRadius.circular(100),
-        //   ),
-        // ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: SegmentedButton<int>(
-              selectedIcon: const Icon(
-                Icons.check,
-                size: 0,
-              ),
-              multiSelectionEnabled: false,
-              // Man kann mit ButtonSegment<T> ein Object in den Buttons abspeichern -> Die Tagespläne
-              segments: const <ButtonSegment<int>>[
-                ButtonSegment(
-                    value: 0,
-                    label: Text('Mo'),
-                    icon: Icon(
-                      Icons.calendar_view_day,
-                      size: 0,
-                    )),
-                ButtonSegment(
-                    value: 1,
-                    label: Text('Di'),
-                    icon: Icon(
-                      Icons.calendar_view_day,
-                      size: 0,
-                    )),
-                ButtonSegment(
-                    value: 2,
-                    label: Text('Mi'),
-                    icon: Icon(
-                      Icons.calendar_view_day,
-                      size: 0,
-                    )),
-                ButtonSegment(
-                    value: 3,
-                    label: Text('Do'),
-                    icon: Icon(
-                      Icons.calendar_view_day,
-                      size: 0,
-                    )),
-                ButtonSegment(
-                    value: 4,
-                    label: Text('Fr'),
-                    icon: Icon(
-                      Icons.calendar_view_day,
-                      size: 0,
-                    )),
-              ],
-              selected: <int>{currentWDSelection},
-              onSelectionChanged: (newSelection) {
-                setState(() {
-                  currentWDSelection = newSelection.first;
-                  calcPersonalTTBLday();
-                });
-              }),
-        ),
-        const TimeTableEntry(
-          stunde: "stunde",
-          raum: "raum",
-          fach: "fach",
-          stfach: "st. fach",
-          stfachLineThrough: false,
-          headline: true,
-        ),
-        const Divider(),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () async {
-              getTimeTable();
-            },
+    return RefreshIndicator(
+      onRefresh: () async {
+        getTimeTable();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: SegmentedButton<int>(
+                selectedIcon: const Icon(
+                  Icons.check,
+                  size: 0,
+                ),
+                multiSelectionEnabled: false,
+                // Man kann mit ButtonSegment<T> ein Object in den Buttons abspeichern -> Die Tagespläne
+                segments: const <ButtonSegment<int>>[
+                  ButtonSegment(
+                      value: 0,
+                      label: Text('Mo'),
+                      icon: Icon(
+                        Icons.calendar_view_day,
+                        size: 0,
+                      )),
+                  ButtonSegment(
+                      value: 1,
+                      label: Text('Di'),
+                      icon: Icon(
+                        Icons.calendar_view_day,
+                        size: 0,
+                      )),
+                  ButtonSegment(
+                      value: 2,
+                      label: Text('Mi'),
+                      icon: Icon(
+                        Icons.calendar_view_day,
+                        size: 0,
+                      )),
+                  ButtonSegment(
+                      value: 3,
+                      label: Text('Do'),
+                      icon: Icon(
+                        Icons.calendar_view_day,
+                        size: 0,
+                      )),
+                  ButtonSegment(
+                      value: 4,
+                      label: Text('Fr'),
+                      icon: Icon(
+                        Icons.calendar_view_day,
+                        size: 0,
+                      )),
+                ],
+                selected: <int>{currentWDSelection},
+                onSelectionChanged: (newSelection) {
+                  setState(() {
+                    currentWDSelection = newSelection.first;
+                    calcPersonalTTBLday();
+                  });
+                }),
+          ),
+          const TimeTableEntry(
+            stunde: "stunde",
+            raum: "raum",
+            fach: "fach",
+            stfach: "st. fach",
+            stfachLineThrough: false,
+            headline: true,
+          ),
+          const Divider(),
+          Expanded(
             child: ListView.builder(
                 itemCount: personalTimeTableDAY.isNotEmpty
                     ? personalTimeTableDAY.length
@@ -315,8 +309,8 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
                   );
                 }),
           ),
-        ),
-      ]),
+        ]),
+      ),
     );
   }
 }

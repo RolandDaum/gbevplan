@@ -6,14 +6,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/firebase_options.dart';
-import 'package:gbevplan/pages/home.dart';
-import 'package:gbevplan/pages/home_screens/home_news.dart';
-import 'package:gbevplan/pages/home_screens/home_ogtimetable.dart';
-import 'package:gbevplan/pages/home_screens/home_settings.dart';
-import 'package:gbevplan/pages/home_screens/settings_screens/change_seedcolor.dart';
-import 'package:gbevplan/pages/home_screens/settings_screens/edit_timetable.dart';
+import 'package:gbevplan/pages/home_screens/home_screen.dart';
+import 'package:gbevplan/pages/home_screens/home_page_news.dart';
+import 'package:gbevplan/pages/home_screens/home_page_ogtimetable.dart';
+import 'package:gbevplan/pages/home_screens/home_page_settings.dart';
+import 'package:gbevplan/pages/home_screens/settings_screens/settings_page_changeseedcolor.dart';
+import 'package:gbevplan/pages/home_screens/settings_screens/settings_page_edittimetable.dart';
 import 'package:gbevplan/pages/login.dart';
-import 'package:gbevplan/pages/setup_screens/setupstart_screen.dart';
+import 'package:gbevplan/pages/intro_screens/intro_start_screen.dart';
+import 'package:gbevplan/pages/oldappversion_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -46,9 +47,11 @@ void main() async {
 
   // HIVE initialization
   await Hive.initFlutter();
-  await Hive.openBox("appdata").then((box) => {
-        if (box.isEmpty) {appInit()}
-      });
+  await Hive.openBox("appdata").then((box) async {
+    if (box.isEmpty) {
+      await appInit();
+    }
+  });
 
   // Local Notification
   await AwesomeNotifications().initialize(null, [
@@ -93,16 +96,14 @@ void main() async {
     // print(token);
   });
 
-  // // Navigation/Notification Bar Style
-  // SystemChrome.setSystemUIOverlayStyle(
-  //   SystemUiOverlayStyle(
-  //     statusBarIconBrightness:
-  //         WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-  //                 Brightness.light
-  //             ? Brightness.dark
-  //             : Brightness.light,
-  //   ),
-  // );
+  await FirebaseDatabase.instance
+      .ref('/data/appversion')
+      .once()
+      .then((DatabaseEvent event) async {
+    // print(event.snapshot.value as String);
+    Hive.box("appdata")
+        .put("newest_appversion", event.snapshot.value as String);
+  });
 
   runApp(const MainGBEVplan());
 }
@@ -111,17 +112,9 @@ Future<void> appInit() async {
   // print("app init");
   FirebaseMessaging.instance.subscribeToTopic("everyone");
   var appdataBOX = Hive.box("appdata");
+  appdataBOX.put("appversion", "0.0.1");
+
   appdataBOX.put("rememberme", false);
-  // await appdataBOX.put("username", null);
-  // await appdataBOX.put("password", null);
-  // String ttbyear = "";
-  // await FirebaseDatabase.instance
-  //     .ref('/data/ttbyear')
-  //     .once()
-  //     .then((DatabaseEvent event) {
-  //   ttbyear = event.snapshot.value as String;
-  // });
-  // appdataBOX.put("ttbyear", ttbyear);
   appdataBOX.put("schulstufe", null);
   appdataBOX.put("initBoot", true);
   appdataBOX.put("thememode", "system");
@@ -136,15 +129,21 @@ class MainGBEVplan extends StatefulWidget {
 
 class MainGBEVplanState extends State<MainGBEVplan> {
   bool savedSeedColor = false;
-  late Box appdataBox;
+  late Box appdataBox = Hive.box("appdata");
   late ThemeMode loadedThemeMode;
+  String local_appversion = "";
+  String newest_appversion = "";
 
   @override
-  void initState() {
+  initState() {
     super.initState();
+    local_appversion = appdataBox.get("appversion");
+    newest_appversion = appdataBox.get("newest_appversion");
+
+    // print([local_appversion, newest_appversion]);
+
     _callFunction();
 
-    appdataBox = Hive.box("appdata");
     if (appdataBox.get("seedcolor_red") != null) {
       savedSeedColor = true;
     }
@@ -238,9 +237,13 @@ class MainGBEVplanState extends State<MainGBEVplan> {
         themeMode: loadedThemeMode,
         debugShowCheckedModeBanner: false,
         // debugShowMaterialGrid: true,
-        initialRoute: '/',
+        initialRoute: newest_appversion == local_appversion &&
+                newest_appversion.isNotEmpty
+            ? '/'
+            : '/oldappversion',
         routes: {
           '/': (context) => const page_login(),
+          '/oldappversion': (context) => const OldappversionScreen(),
           '/home': (context) => const Home(),
           '/home/settings': (context) => const HomeSettings(),
           '/home/settings/editttb': (context) => const Editttb(),
@@ -248,7 +251,7 @@ class MainGBEVplanState extends State<MainGBEVplan> {
               const Changeseedcolor(),
           '/home/news': (context) => const HomeNews(),
           '/home/ogtt': (context) => const HomeOGTimeTable(),
-          '/setuptuto': (context) => const SetupTuto(),
+          '/introstart': (context) => const IntroStartScreen(),
         },
       );
     });

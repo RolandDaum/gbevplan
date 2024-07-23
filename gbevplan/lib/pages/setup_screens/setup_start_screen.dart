@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/components/empty_widget.dart';
-import 'package:gbevplan/pages/setup_screens/setup_page_courseselection.dart';
-import 'package:gbevplan/pages/setup_screens/setup_page_intro.dart';
-import 'package:gbevplan/pages/setup_screens/setup_page_jhgselection.dart';
+import 'package:gbevplan/pages/intro_screens/intro_page_intro_2.dart';
+import 'package:gbevplan/pages/intro_screens/intro_page_intro.dart';
+import 'package:gbevplan/pages/intro_screens/intro_page_intro_3.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+// Just back up from old layout !!!!!!!
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 class SetupTuto extends StatefulWidget {
   const SetupTuto({super.key});
@@ -17,9 +30,9 @@ class _SetupTutoState extends State<SetupTuto> {
   int _currentpage = 0;
   final PageController _controller = PageController();
   final List<Widget> setuppages = [
-    const SetupPageIntro(),
-    const SetupPageJhgselection(),
-    const SetupPageCourseselection()
+    const IntroPageIntro(),
+    const IntroPageIntro2(),
+    const IntroPageIntro3(),
   ];
 
   @override
@@ -96,11 +109,6 @@ class _SetupTutoState extends State<SetupTuto> {
                             Icons.arrow_forward_ios_rounded,
                             color: Theme.of(context).colorScheme.onSurface,
                           )
-                        // : Icon(
-                        //     Icons.arrow_forward_ios_rounded,
-                        //     color:
-                        //         Theme.of(context).colorScheme.onInverseSurface,
-                        //   )),
                         : Icon(Icons.check_rounded,
                             color: Theme.of(context)
                                 .colorScheme
