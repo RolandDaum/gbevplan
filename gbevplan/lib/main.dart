@@ -5,6 +5,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gbevplan/Objects/timetable.dart';
+import 'package:gbevplan/Objects/timetable_lesson.dart';
+import 'package:gbevplan/Objects/timetable_weekday.dart';
 import 'package:gbevplan/firebase_options.dart';
 import 'package:gbevplan/pages/home_screens/home_screen.dart';
 import 'package:gbevplan/pages/home_screens/home_page_news.dart';
@@ -47,9 +50,14 @@ void main() async {
 
   // HIVE initialization
   await Hive.initFlutter();
-  await Hive.openBox("appdata").then((box) async {
+  Hive.registerAdapter(TimetableAdapter());
+  Hive.registerAdapter(TimetableWeekdayAdapter());
+  Hive.registerAdapter(TimetableLessonAdapter());
+
+  Hive.openBox("appdata").then((box) async {
     if (box.isEmpty) {
-      await appInit();
+      // App Init await takes some time ??? -> slow app start?
+      appInit();
     }
   });
 
@@ -96,11 +104,11 @@ void main() async {
     // print(token);
   });
 
+  // Slows down start up
   await FirebaseDatabase.instance
       .ref('/data/appversion')
       .once()
       .then((DatabaseEvent event) async {
-    // print(event.snapshot.value as String);
     Hive.box("appdata")
         .put("newest_appversion", event.snapshot.value as String);
   });

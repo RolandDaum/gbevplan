@@ -3,63 +3,66 @@ import 'package:flutter/material.dart';
 class Bulletlist extends StatelessWidget {
   final List<Bulletpoint> data;
   final String bulletpointChar;
-  TextStyle? textstyle;
+  final TextStyle? textstyle;
 
-  Bulletlist(
-      {super.key,
-      required this.data,
-      this.bulletpointChar = "•",
-      this.textstyle});
+  Bulletlist({
+    super.key,
+    required this.data,
+    this.bulletpointChar = "•",
+    this.textstyle,
+  });
 
   @override
   Widget build(BuildContext context) {
-    textstyle ??= Theme.of(context).textTheme.bodyLarge;
+    final effectiveTextStyle =
+        textstyle ?? Theme.of(context).textTheme.bodyLarge;
 
     return ListView.builder(
-        shrinkWrap: true,
-        itemCount: data.length,
-        physics:
-            const NeverScrollableScrollPhysics(), // TODO: Might have to comment it out for realy long list ?!
-        itemBuilder: (context, index) {
-          late double _paddingSize;
-          int indentlevel = data.elementAt(index).indent;
-          switch (indentlevel) {
-            case 0:
-              _paddingSize = 0;
-              break;
-            case 1:
-              _paddingSize = 24;
-              break;
-            case 2:
-              _paddingSize = 42;
-              break;
+      shrinkWrap: true,
+      itemCount: data.length,
+      physics: const NeverScrollableScrollPhysics(), // Disable scrolling
+      itemBuilder: (context, index) {
+        final indentLevel = data[index].indent;
+        final paddingSize = _getPaddingSize(indentLevel);
 
-            default:
-              _paddingSize = 54;
-              break;
-          }
-
-          return Padding(
-            padding: EdgeInsets.only(left: _paddingSize)
-                .add(const EdgeInsets.symmetric(vertical: 8)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: Text(bulletpointChar,
-                      style: textstyle!.copyWith(fontWeight: FontWeight.bold)),
+        return Padding(
+          padding: EdgeInsets.only(left: paddingSize)
+              .add(const EdgeInsets.symmetric(vertical: 8)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: Text(
+                  bulletpointChar,
+                  style:
+                      effectiveTextStyle?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                Flexible(
-                  child: Text(
-                    style: textstyle,
-                    data.elementAt(index).text,
-                  ),
-                )
-              ],
-            ),
-          );
-        });
+              ),
+              Flexible(
+                child: Text(
+                  data[index].text,
+                  style: effectiveTextStyle,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  double _getPaddingSize(int indentLevel) {
+    switch (indentLevel) {
+      case 0:
+        return 0;
+      case 1:
+        return 24;
+      case 2:
+        return 42;
+      default:
+        return 54;
+    }
   }
 }
 
@@ -67,5 +70,5 @@ class Bulletpoint {
   final int indent;
   final String text;
 
-  Bulletpoint({this.indent = 0, required this.text});
+  const Bulletpoint({this.indent = 0, required this.text});
 }

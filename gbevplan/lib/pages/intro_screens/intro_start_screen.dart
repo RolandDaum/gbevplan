@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gbevplan/components/bulletlist.dart';
 import 'package:gbevplan/components/empty_widget.dart';
-import 'package:gbevplan/pages/intro_screens/intro_page_intro_2.dart';
-import 'package:gbevplan/pages/intro_screens/intro_page_intro.dart';
-import 'package:gbevplan/pages/intro_screens/intro_page_intro_3.dart';
+import 'package:gbevplan/pages/intro_screens/intro_page.dart';
 import 'package:hive/hive.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -19,10 +18,43 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
   final PageController _controller = PageController();
   int _currentpage = 0;
 
-  final List<Widget> intropages = [
-    const IntroPageIntro(),
-    const IntroPageIntro2(),
-    const IntroPageIntro3(),
+  final List<Widget> intropages = const [
+    IntroPage(
+      headling: "Stundenplan",
+      bulletlistData: [
+        Bulletpoint(
+            text: "Direkter Zugriff auf deinen persönlichen Stundenplan"),
+        Bulletpoint(text: "Automatische Generierung und Aktualisierung"),
+        Bulletpoint(text: "Schnelle Information über die aktuelle Stunde"),
+      ],
+      lottiAnimationAsset: "assets/lottie/animation_list_growshrink.json",
+    ),
+    IntroPage(
+      headling: "Vertretungsplan",
+      bulletlistData: [
+        Bulletpoint(
+            text:
+                "Direkter und schneller Zugriff auf den originalen Vertretungsplan"),
+        Bulletpoint(
+            text:
+                "Benachrichtigung nach der Veröffentlichung eines neuen VPlans"),
+        Bulletpoint(
+            text:
+                "Mit Einberechnung des VPlans in deinen Stundenplan (coming soon)")
+      ],
+      lottiAnimationAsset: "assets/lottie/animation_list_exchange.json",
+    ),
+    IntroPage(
+      headling: "Customize",
+      bulletlistData: [
+        Bulletpoint(text: "Deine Farbe in der App"),
+        Bulletpoint(
+            text:
+                "Ändere die Seedcolor der App in den Einstellung und alles wird sich nach deinem Geschmack richten."),
+        Bulletpoint(text: "Mehr persönlichkeit dank Material You"),
+      ],
+      lottiAnimationAsset: "assets/lottie/animation_colorbucket_drop.json",
+    ),
   ];
 
   @override
@@ -51,6 +83,7 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
           children: intropages,
         ),
         Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.topRight,
             child: TextButton(
                 onPressed: () {

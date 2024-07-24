@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gbevplan/components/empty_widget.dart';
 import 'package:hive/hive.dart';
+import 'dart:io';
 
 class OldappversionScreen extends StatefulWidget {
   const OldappversionScreen({super.key});
@@ -61,7 +63,15 @@ class _OldappversionScreenState extends State<OldappversionScreen> {
                   style: Theme.of(context).textTheme.bodyMedium,
                   "Required App Version: $newestAppversion"),
               const SizedBox(height: 128),
-              FilledButton(onPressed: () {}, child: const Text("Exit"))
+              FilledButton(
+                  onPressed: () {
+                    if (Platform.isAndroid) {
+                      SystemNavigator.pop();
+                    } else if (Platform.isIOS) {
+                      exit(0);
+                    }
+                  },
+                  child: const Text("Exit"))
             ],
           ),
         ),

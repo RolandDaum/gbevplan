@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gbevplan/tmp.dart';
 
 // ignore: camel_case_types
 class HomeNews extends StatefulWidget {
@@ -43,7 +44,12 @@ class HomeNewsState extends State<HomeNews> {
                 onPressed: () {
                   Navigator.pushNamed(context, "/introstart");
                 },
-                child: const Text("Introduction Screen"))
+                child: const Text("Introduction Screen")),
+            FilledButton(
+                onPressed: () {
+                  transfareData();
+                },
+                child: const Text("Transfare Data"))
           ],
         ),
       ),

@@ -1,150 +1,123 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Flutter code sample for [DropdownMenu]s. The first dropdown menu
-// has the default outlined border and demos using the
-// [DropdownMenuEntry] style parameter to customize its appearance.
-// The second dropdown menu customizes the appearance of the dropdown
-// menu's text field with its [InputDecorationTheme] parameter.
+// Loading the Map data into Firestore
+void transfareData() {
+  Map<String, List<String>> jahrgangsbaende = {
+    'Bd1': ["DE2", "EN2", "EN3", "FR1", "GE1", "GE2", "LA1", "MA1"],
+    'Bd2': ["BI1", "CH1", "DE3", "EK1", "EN1", "PW1"],
+    'Bd3': ["BI2", "DE1", "KU1", "MA2", "PH1", "PW2"],
+    'Bd4': ["bi2", "ch1", "if2", "ph1", "re1"],
+    'Bd5': ["en1", "fr1", "ka1", "ma2", "pw2"],
+    'Bd6': ["bi1", "en2", "ge2", "ku1"],
+    'Bd7': ["de1", "if1", "ma3", "mu1", "snn1"],
+    'Bd8': ["ds1", "ma4", "re2", "wn1", "rk1"],
+    'Bd9': ["de2", "ge1", "ma1", "pw1"],
+    'Bd10': ["sf1", "sf2", "sf3", "sf4", "sf5", "sf6"],
+    'sp1': ["sp1"],
+    'sp2': ["sp2"],
+    'sp3': ["sp3"],
+    'sp4': ["sp4"],
+    'spp1': ["spp1"],
+    'snn1': ["snn1"],
+  };
 
-void main() {
-  runApp(const DropdownMenuExample());
-}
+// Lesson - Bände
+  Map<int, Map<int, String?>> jahrgangsbandplan = {
+    1: {
+      1: "Bd8",
+      2: "Bd8",
+      3: "Bd3",
+      4: "Bd2",
+      5: "Bd7",
+      6: "Bd7",
+      7: null,
+      8: "Bd10",
+      9: "Bd10",
+      10: "sp1",
+      11: "sp1"
+    },
+    2: {
+      1: "Bd2",
+      2: "Bd2",
+      3: "Bd1",
+      4: "Bd1",
+      5: "Bd6",
+      6: "Bd6",
+      7: null,
+      8: "sp2",
+      9: "sp2",
+      10: null,
+      11: null
+    },
+    3: {
+      1: "Bd4",
+      2: "Bd4",
+      3: "Bd5",
+      4: "Bd5",
+      5: "Bd1",
+      6: "Bd9",
+      7: null,
+      8: "Bd3",
+      9: "Bd3",
+      10: "sp3",
+      11: "sp3"
+    },
+    4: {
+      1: "snn1",
+      2: "Bd7",
+      3: "Bd9",
+      4: "Bd9",
+      5: "Bd6",
+      6: "Bd8",
+      7: null,
+      8: "Bd2",
+      9: "Bd2",
+      10: "sp4",
+      11: "sp4"
+    },
+    5: {
+      1: "Bd4",
+      2: "Bd5",
+      3: "Bd1",
+      4: "Bd1",
+      5: "Bd3",
+      6: "Bd3",
+      7: null,
+      8: "spp1",
+      9: "spp1",
+      10: null,
+      11: null
+    }
+  };
 
-// DropdownMenuEntry labels and values for the first dropdown menu.
-enum ColorLabel {
-  blue('Blue', Colors.blue),
-  pink('Pink', Colors.pink),
-  green('Green', Colors.green),
-  yellow('Orange', Colors.orange),
-  grey('Grey', Colors.grey);
+  final db = FirebaseFirestore.instance;
+  db.databaseId = "database";
 
-  const ColorLabel(this.label, this.color);
-  final String label;
-  final Color color;
-}
+  jahrgangsbandplan.forEach((dayINT, dayMap) {
+    dayMap.forEach((stundeINT, bandString) {
+      Map<String, dynamic> datatoadd = {};
 
-// DropdownMenuEntry labels and values for the second dropdown menu.
-enum IconLabel {
-  smile('Smile', Icons.sentiment_satisfied_outlined),
-  cloud(
-    'Cloud',
-    Icons.cloud_outlined,
-  ),
-  brush('Brush', Icons.brush_outlined),
-  heart('Heart', Icons.favorite);
+      bandString != null
+          ? jahrgangsbaende[bandString]!.forEach((stringkurs) {
+              datatoadd[stringkurs] = {"lehrer": "", "raum": ""};
+            })
+          : {};
 
-  const IconLabel(this.label, this.icon);
-  final String label;
-  final IconData icon;
-}
+      db
+          .collection("2023-24-2")
+          .doc("12")
+          .collection((dayINT - 1).toString())
+          .doc((stundeINT - 1).toString())
+          .set(datatoadd);
+    });
+  });
 
-class DropdownMenuExample extends StatefulWidget {
-  const DropdownMenuExample({super.key});
-
-  @override
-  State<DropdownMenuExample> createState() => _DropdownMenuExampleState();
-}
-
-class _DropdownMenuExampleState extends State<DropdownMenuExample> {
-  final TextEditingController colorController = TextEditingController();
-  final TextEditingController iconController = TextEditingController();
-  ColorLabel? selectedColor;
-  IconLabel? selectedIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.green,
-      ),
-      home: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    DropdownMenu<ColorLabel>(
-                      initialSelection: ColorLabel.green,
-                      controller: colorController,
-                      // requestFocusOnTap is enabled/disabled by platforms when it is null.
-                      // On mobile platforms, this is false by default. Setting this to true will
-                      // trigger focus request on the text field and virtual keyboard will appear
-                      // afterward. On desktop platforms however, this defaults to true.
-                      requestFocusOnTap: true,
-                      label: const Text('Color'),
-                      onSelected: (ColorLabel? color) {
-                        setState(() {
-                          selectedColor = color;
-                        });
-                      },
-                      dropdownMenuEntries: ColorLabel.values
-                          .map<DropdownMenuEntry<ColorLabel>>(
-                              (ColorLabel color) {
-                        return DropdownMenuEntry<ColorLabel>(
-                          value: color,
-                          label: color.label,
-                          enabled: color.label != 'Grey',
-                          style: MenuItemButton.styleFrom(
-                            foregroundColor: color.color,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(width: 24),
-                    DropdownMenu<IconLabel>(
-                      controller: iconController,
-                      enableFilter: true,
-                      requestFocusOnTap: true,
-                      leadingIcon: const Icon(Icons.search),
-                      label: const Text('Icon'),
-                      inputDecorationTheme: const InputDecorationTheme(
-                        filled: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 5.0),
-                      ),
-                      onSelected: (IconLabel? icon) {
-                        setState(() {
-                          selectedIcon = icon;
-                        });
-                      },
-                      dropdownMenuEntries:
-                          IconLabel.values.map<DropdownMenuEntry<IconLabel>>(
-                        (IconLabel icon) {
-                          return DropdownMenuEntry<IconLabel>(
-                            value: icon,
-                            label: icon.label,
-                            leadingIcon: Icon(icon.icon),
-                          );
-                        },
-                      ).toList(),
-                    ),
-                  ],
-                ),
-              ),
-              if (selectedColor != null && selectedIcon != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                        'You selected a ${selectedColor?.label} ${selectedIcon?.label}'),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Icon(
-                        selectedIcon?.icon,
-                        color: selectedColor?.color,
-                      ),
-                    )
-                  ],
-                )
-              else
-                const Text('Please select a color and an icon.')
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  dynamic allcourses = [];
+  jahrgangsbaende.forEach((bandname, courseList) {
+    courseList.forEach((course) {
+      allcourses.add(course);
+    });
+  });
+  print(allcourses);
+  db.collection("2023-24-2").doc("12").set({"all_courses": allcourses});
 }

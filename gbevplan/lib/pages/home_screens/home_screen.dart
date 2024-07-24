@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
       // primary:
       //     true, // Is nessesary that the body does not get under the system tray
       appBar: const EmptyWidget(), // ^^
-      body: const HomeVPlan(),
+      body: const HomePageVplan(),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (value) => {
           setState(() {

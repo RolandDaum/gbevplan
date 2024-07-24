@@ -1,82 +1,32 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:gbevplan/script.dart';
+import 'package:gbevplan/Objects/timetable.dart';
 import 'package:gbevplan/components/bottomsheet_lesson.dart';
 import 'package:gbevplan/components/timetable_entry.dart';
 import 'package:hive/hive.dart';
 
-class HomeVPlan extends StatefulWidget {
-  const HomeVPlan({super.key});
+class HomePageVplan extends StatefulWidget {
+  const HomePageVplan({super.key});
 
   @override
-  State<HomeVPlan> createState() => HomeVPlanState();
+  State<HomePageVplan> createState() => _HomePageVplanState();
 }
 
-class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
-  late Box appdataBox;
-  int _subjSelecIndex = 0;
+class _HomePageVplanState extends State<HomePageVplan>
+    with TickerProviderStateMixin {
+  Box appdataBox = Hive.box("appdata");
 
+  int _subjSelecIndex = 0;
   int currentWDSelection = 0;
-  Map<int, Map<int, Map<String, dynamic>>> timetable =
-      {}; // TODO: Make this think a fucking OBJ and your good to go. Add some functions an stuff, e.g. getTimetable, so it can all be reused!!!
-  Map<int, List<String>> personalTimeTableDAY = {};
+
+  late Timetable timetable;
 
   @override
   void initState() {
     super.initState();
 
+    timetable = appdataBox.get("timetable");
+
     setCurrentTime();
-    getTimeTable();
-  }
-
-  void getTimeTable() async {
-    appdataBox = Hive.box("appdata");
-    String ttbyear = "";
-    await FirebaseDatabase.instance
-        .ref('/data/ttbyear')
-        .once()
-        .then((DatabaseEvent event) {
-      ttbyear = event.snapshot.value as String;
-    });
-    int jahrgang = appdataBox.get("jahrgang");
-    // print(Scripts.jhginttostring(jahrgang));
-    // Wochentag -> Stunde -> Kurs: Raum
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    db.databaseId = "database";
-    await db
-        .collection(ttbyear)
-        .doc(Scripts.jhginttostring(jahrgang))
-        .collection('${jahrgang}_timetable')
-        .get()
-        .then((value) {
-      for (var weekdayDOC in value.docs) {
-        int weekday = int.parse(weekdayDOC.id);
-        timetable[weekday] = {};
-
-        weekdayDOC.data().forEach((lesson, courseMap) {
-          int lessonHour = int.parse(lesson);
-          timetable[weekday]![lessonHour] = courseMap;
-        });
-      }
-    });
-    calcPersonalTTBLday();
-  }
-
-  void calcPersonalTTBLday() {
-    Box appdataBox = Hive.box("appdata");
-    List<String> selectedKurse =
-        appdataBox.get("selectedKurse") as List<String>;
-
-    timetable[currentWDSelection]!.forEach((lessonNum, courses) {
-      personalTimeTableDAY[lessonNum] = ["---", "---"];
-      courses.forEach((course, room) {
-        if (selectedKurse.contains(course)) {
-          personalTimeTableDAY[lessonNum] = [course, room];
-        }
-      });
-    });
-    setState(() {});
   }
 
   void setCurrentTime() {
@@ -138,7 +88,9 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        getTimeTable();
+        setState(() {
+          timetable = appdataBox.get("timetable");
+        });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -193,7 +145,6 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
                 onSelectionChanged: (newSelection) {
                   setState(() {
                     currentWDSelection = newSelection.first;
-                    calcPersonalTTBLday();
                   });
                 }),
           ),
@@ -208,9 +159,7 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
           const Divider(),
           Expanded(
             child: ListView.builder(
-                itemCount: personalTimeTableDAY.isNotEmpty
-                    ? personalTimeTableDAY.length
-                    : 11,
+                itemCount: 11,
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
                     children: [
@@ -227,20 +176,7 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return const BottomSheeetLesson();
-                                  }).then((value) {
-                                // SystemChrome.setSystemUIOverlayStyle(
-                                //     SystemUiOverlayStyle(
-                                //         systemNavigationBarColor:
-                                //             Theme.of(context)
-                                //                 .colorScheme
-                                //                 .surfaceContainer));
-                              }),
-                              // SystemChrome.setSystemUIOverlayStyle(
-                              //     SystemUiOverlayStyle(
-                              //         systemNavigationBarColor:
-                              //             Theme.of(context)
-                              //                 .colorScheme
-                              //                 .surfaceContainerLow))
+                                  }).then((value) {}),
                             }
                         },
                         onDoubleTap: () {
@@ -253,19 +189,7 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
                               context: context,
                               builder: (BuildContext context) {
                                 return const BottomSheeetLesson();
-                              }).then((value) {
-                            // SystemChrome.setSystemUIOverlayStyle(
-                            //     SystemUiOverlayStyle(
-                            //         systemNavigationBarColor: Theme.of(context)
-                            //             .colorScheme
-                            //             .surfaceContainer));
-                          });
-                          // SystemChrome.setSystemUIOverlayStyle(
-                          //     SystemUiOverlayStyle(
-                          //         systemNavigationBarColor: Theme.of(context)
-                          //             .colorScheme
-                          //             .surfaceContainerLow));
-                          // }
+                              }).then((value) {});
                         },
                         child: Card.filled(
                           color: index == _subjSelecIndex
@@ -281,12 +205,10 @@ class HomeVPlanState extends State<HomeVPlan> with TickerProviderStateMixin {
                                     horizontal: 16, vertical: 8),
                             child: TimeTableEntry(
                               stunde: (index + 1).toString(),
-                              raum: personalTimeTableDAY.isNotEmpty
-                                  ? personalTimeTableDAY[index]![0]
-                                  : "---",
-                              fach: personalTimeTableDAY.isNotEmpty
-                                  ? personalTimeTableDAY[index]![1]
-                                  : "---",
+                              raum: timetable.timetable[currentWDSelection]
+                                  .dailytimetable[index].raum,
+                              fach: timetable.timetable[currentWDSelection]
+                                  .dailytimetable[index].coursename,
                               stfach: "",
                               highlighted:
                                   index == _subjSelecIndex ? true : false,
