@@ -18,6 +18,7 @@ import 'package:gbevplan/pages/home_screens/settings_screens/settings_page_editt
 import 'package:gbevplan/pages/login.dart';
 import 'package:gbevplan/pages/intro_screens/intro_start_screen.dart';
 import 'package:gbevplan/pages/oldappversion_screen.dart';
+import 'package:gbevplan/pages/setup_screens/setup_start_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -126,6 +127,8 @@ Future<void> appInit() async {
   appdataBOX.put("schulstufe", null);
   appdataBOX.put("initBoot", true);
   appdataBOX.put("thememode", "system");
+  appdataBOX.put("selectedKurse", []);
+  appdataBOX.put("jahrgang", 0);
 }
 
 class MainGBEVplan extends StatefulWidget {
@@ -260,6 +263,7 @@ class MainGBEVplanState extends State<MainGBEVplan> {
           '/home/news': (context) => const HomeNews(),
           '/home/ogtt': (context) => const HomeOGTimeTable(),
           '/introstart': (context) => const IntroStartScreen(),
+          '/setupstart': (context) => const SetupStartScreen(),
         },
       );
     });

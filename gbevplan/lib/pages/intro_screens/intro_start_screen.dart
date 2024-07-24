@@ -87,9 +87,9 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
             alignment: Alignment.topRight,
             child: TextButton(
                 onPressed: () {
-                  // ToDo: Add skip functionallity
+                  Navigator.pushReplacementNamed(context, "/setupstart");
                 },
-                child: const Text("Skip"))),
+                child: const Text("überspringen"))),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -114,16 +114,15 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
                       _controller.animateToPage(_controller.page!.toInt() + 1,
                           duration: Durations.medium1, curve: Curves.easeInOut);
                     } else {
-                      appdataBox.put("initBoot", false);
-                      Navigator.pushReplacementNamed(context, "/home");
+                      Navigator.pushReplacementNamed(context, "/setupstart");
                     }
                   },
                   child: Container(
                       alignment: Alignment.center,
                       width: 150,
                       child: _currentpage != intropages.length - 1
-                          ? const Text("Continue")
-                          : const Text("Setup"))),
+                          ? const Text("weiter")
+                          : const Text("einrichten"))),
             ),
           ],
         )

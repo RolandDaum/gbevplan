@@ -13,10 +13,11 @@ class Timetable {
 
   Timetable({required this.timetable});
 
-  static createTimetable() async {
+  static Future<Timetable> createTimetable() async {
     Box appdataBox = Hive.box("appdata");
     int jahrgang = appdataBox.get("jahrgang");
-    List<String> selectedCourses = appdataBox.get("selectedKurse");
+    List<String> selectedCourses =
+        appdataBox.get("selectedKurse").cast<String>();
     String ttbyear = "";
     await FirebaseDatabase.instance
         .ref('/data/ttbyear')
@@ -61,5 +62,7 @@ class Timetable {
 
     await appdataBox.put("timetable", Timetable(timetable: timetable));
     print(" S A V E D  -  T I M E T A B L E");
+
+    return Timetable(timetable: timetable);
   }
 }

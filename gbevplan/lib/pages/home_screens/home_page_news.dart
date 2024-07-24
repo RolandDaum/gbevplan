@@ -34,7 +34,7 @@ class HomeNewsState extends State<HomeNews> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "N E W S",
+              "N E W S", // Change to school stats e.g. how many lessons are left this day/week/month/year etc.
               style: Theme.of(context).textTheme.displayMedium,
             ),
             const SizedBox(
@@ -47,7 +47,7 @@ class HomeNewsState extends State<HomeNews> {
                 child: const Text("Introduction Screen")),
             FilledButton(
                 onPressed: () {
-                  transfareData();
+                  // transfareData();
                 },
                 child: const Text("Transfare Data"))
           ],

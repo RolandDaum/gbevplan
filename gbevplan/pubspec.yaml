@@ -43,3 +43,5 @@ flutter:
     - assets/lottie/animation_list_exchange.json
     - assets/lottie/animation_list_growshrink.json
     - assets/lottie/animation_loading_circle.json
+    - assets/lottie/animation_settings_rotating.json
+    - assets/lottie/animation_list_scrollthrough.json
