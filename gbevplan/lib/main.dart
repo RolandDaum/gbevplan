@@ -55,7 +55,8 @@ void main() async {
   Hive.registerAdapter(TimetableWeekdayAdapter());
   Hive.registerAdapter(TimetableLessonAdapter());
 
-  Hive.openBox("appdata").then((box) async {
+  // APP INIT
+  await Hive.openBox("appdata").then((box) async {
     if (box.isEmpty) {
       // App Init await takes some time ??? -> slow app start?
       appInit();
@@ -63,7 +64,7 @@ void main() async {
   });
 
   // Local Notification
-  await AwesomeNotifications().initialize(null, [
+  AwesomeNotifications().initialize(null, [
     NotificationChannel(
         channelGroupKey: "localChannel_Group",
         channelKey: "localchannel",
@@ -101,11 +102,9 @@ void main() async {
     navigatorKey.currentState
         ?.pushNamed("/PAGE_TEST", arguments: "YOU TAPPED ON THE NOTIFICATION");
   });
-  FirebaseMessaging.instance.getToken().then((token) {
-    // print(token);
-  });
+  FirebaseMessaging.instance.getToken().then((token) {});
 
-  // Slows down start up
+  // NEWEST APP VERSION GETTER
   await FirebaseDatabase.instance
       .ref('/data/appversion')
       .once()
@@ -117,8 +116,7 @@ void main() async {
   runApp(const MainGBEVplan());
 }
 
-Future<void> appInit() async {
-  // print("app init");
+appInit() async {
   FirebaseMessaging.instance.subscribeToTopic("everyone");
   var appdataBOX = Hive.box("appdata");
   appdataBOX.put("appversion", "0.0.1");
@@ -129,6 +127,9 @@ Future<void> appInit() async {
   appdataBOX.put("thememode", "system");
   appdataBOX.put("selectedKurse", []);
   appdataBOX.put("jahrgang", 0);
+  appdataBOX.put("seedcolor_red", 0);
+  appdataBOX.put("seedcolor_green", 51);
+  appdataBOX.put("seedcolor_blue", 153);
 }
 
 class MainGBEVplan extends StatefulWidget {
@@ -140,7 +141,7 @@ class MainGBEVplan extends StatefulWidget {
 
 class MainGBEVplanState extends State<MainGBEVplan> {
   bool savedSeedColor = false;
-  late Box appdataBox = Hive.box("appdata");
+  Box appdataBox = Hive.box("appdata");
   late ThemeMode loadedThemeMode;
   String local_appversion = "";
   String newest_appversion = "";
@@ -150,26 +151,12 @@ class MainGBEVplanState extends State<MainGBEVplan> {
     super.initState();
     local_appversion = appdataBox.get("appversion");
     newest_appversion = appdataBox.get("newest_appversion");
-
-    // print([local_appversion, newest_appversion]);
-
-    _callFunction();
-
-    if (appdataBox.get("seedcolor_red") != null) {
-      savedSeedColor = true;
-    }
-
-    // print(appdataBox.get("thememode") as String);
     switch (appdataBox.get("thememode").toString()) {
       case "light":
         loadedThemeMode = ThemeMode.light;
-        SystemChrome.setSystemUIOverlayStyle(
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.light));
         break;
       case "dark":
         loadedThemeMode = ThemeMode.dark;
-        SystemChrome.setSystemUIOverlayStyle(
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark));
         break;
       case "system":
         loadedThemeMode = ThemeMode.system;
@@ -213,59 +200,58 @@ class MainGBEVplanState extends State<MainGBEVplan> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      return MaterialApp(
-        navigatorKey: navigatorKey,
-
-        title: 'Flutter Demo',
-        theme: ThemeData(
-            useMaterial3: true,
-            brightness: Brightness.light,
-            fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
-            colorSchemeSeed: savedSeedColor
-                ? Color.fromRGBO(
-                    appdataBox.get("seedcolor_red"),
-                    appdataBox.get("seedcolor_green"),
-                    appdataBox.get("seedcolor_blue"),
-                    1)
-                : lightDynamic != null
-                    ? lightDynamic.primary
-                    : const Color(0xFF002A68)),
-        darkTheme: ThemeData(
-            useMaterial3: true,
-            brightness: Brightness.dark,
-            fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
-            colorSchemeSeed: savedSeedColor
-                ? Color.fromRGBO(
-                    appdataBox.get("seedcolor_red"),
-                    appdataBox.get("seedcolor_green"),
-                    appdataBox.get("seedcolor_blue"),
-                    1)
-                : darkDynamic != null
-                    ? darkDynamic.primary
-                    : const Color(0xFF002A68)),
-        themeMode: loadedThemeMode,
-        debugShowCheckedModeBanner: false,
-        // debugShowMaterialGrid: true,
-        initialRoute: newest_appversion == local_appversion &&
-                newest_appversion.isNotEmpty
-            ? '/'
-            : '/oldappversion',
-        routes: {
-          '/': (context) => const page_login(),
-          '/oldappversion': (context) => const OldappversionScreen(),
-          '/home': (context) => const Home(),
-          '/home/settings': (context) => const HomeSettings(),
-          '/home/settings/editttb': (context) => const Editttb(),
-          '/home/settings/changeseedcolor': (context) =>
-              const Changeseedcolor(),
-          '/home/news': (context) => const HomeNews(),
-          '/home/ogtt': (context) => const HomeOGTimeTable(),
-          '/introstart': (context) => const IntroStartScreen(),
-          '/setupstart': (context) => const SetupStartScreen(),
-        },
-      );
-    });
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        useMaterial3: true,
+        fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
+        colorSchemeSeed: Color.fromRGBO(
+            appdataBox.get("seedcolor_red"),
+            appdataBox.get("seedcolor_green"),
+            appdataBox.get("seedcolor_blue"),
+            1),
+        appBarTheme: AppBarTheme.of(context).copyWith(
+            systemOverlayStyle: const SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.light,
+                statusBarIconBrightness: Brightness.dark,
+                statusBarColor: Colors.transparent)),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        useMaterial3: true,
+        fontFamily: GoogleFonts.mPlusRounded1c().fontFamily,
+        colorSchemeSeed: Color.fromRGBO(
+            appdataBox.get("seedcolor_red"),
+            appdataBox.get("seedcolor_green"),
+            appdataBox.get("seedcolor_blue"),
+            1),
+        appBarTheme: AppBarTheme.of(context).copyWith(
+            systemOverlayStyle: const SystemUiOverlayStyle(
+                statusBarBrightness: Brightness.dark,
+                statusBarIconBrightness: Brightness.light,
+                statusBarColor: Colors.transparent)),
+      ),
+      themeMode: loadedThemeMode,
+      // themeMode: ThemeMode.dark,
+      debugShowCheckedModeBanner: false,
+      initialRoute:
+          newest_appversion == local_appversion && newest_appversion.isNotEmpty
+              ? '/'
+              : '/oldappversion',
+      routes: {
+        '/': (context) => const page_login(),
+        '/oldappversion': (context) => const OldappversionScreen(),
+        '/home': (context) => const Home(),
+        '/home/settings': (context) => const HomeSettings(),
+        '/home/settings/editttb': (context) => const Editttb(),
+        '/home/settings/changeseedcolor': (context) => const Changeseedcolor(),
+        '/home/news': (context) => const HomeNews(),
+        '/home/ogtt': (context) => const HomeOGTimeTable(),
+        '/introstart': (context) => const IntroStartScreen(),
+        '/setupstart': (context) => const SetupStartScreen(),
+      },
+    );
   }
 }

@@ -28,6 +28,8 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   flutter_animate: ^4.5.0
   lottie: ^3.1.2
+  provider: ^6.1.2
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -45,3 +47,4 @@ flutter:
     - assets/lottie/animation_loading_circle.json
     - assets/lottie/animation_settings_rotating.json
     - assets/lottie/animation_list_scrollthrough.json
+    - assets/lottie/animation_listgrid_scrollthrough.json

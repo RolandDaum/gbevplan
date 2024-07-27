@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/tmp.dart';
+import 'package:lottie/lottie.dart';
 
 // ignore: camel_case_types
 class HomeNews extends StatefulWidget {
@@ -34,7 +35,7 @@ class HomeNewsState extends State<HomeNews> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "N E W S", // Change to school stats e.g. how many lessons are left this day/week/month/year etc.
+              " S T A T S", // Change to school stats e.g. how many lessons are left this day/week/month/year etc.
               style: Theme.of(context).textTheme.displayMedium,
             ),
             const SizedBox(
@@ -49,7 +50,30 @@ class HomeNewsState extends State<HomeNews> {
                 onPressed: () {
                   // transfareData();
                 },
-                child: const Text("Transfare Data"))
+                child: const Text("Transfare Data")),
+            FilledButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      // barrierDismissible: false,
+                      builder: (_) => Container(
+                            height: 60,
+                            width: 60,
+                            child: Lottie.asset(
+                              "assets/lottie/animation_loading_circle.json",
+                              delegates: LottieDelegates(
+                                values: [
+                                  // keyPath order: ['layer name', 'group name', 'shape name']
+                                  ValueDelegate.color(const ["**", "**", "**"],
+                                      value: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface),
+                                ],
+                              ),
+                            ),
+                          ));
+                },
+                child: const Text("showdialog"))
           ],
         ),
       ),

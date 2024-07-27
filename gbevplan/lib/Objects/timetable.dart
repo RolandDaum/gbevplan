@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gbevplan/Objects/timetable_lesson.dart';
 import 'package:gbevplan/Objects/timetable_weekday.dart';
+import 'package:gbevplan/main.dart';
 import 'package:hive/hive.dart';
 
 part 'timetable.g.dart';
@@ -13,7 +16,8 @@ class Timetable {
 
   Timetable({required this.timetable});
 
-  static Future<Timetable> createTimetable() async {
+  /// Creates a new timetable based on the user selected courses and the in the firestore saved global timetable
+  static createTimetable() async {
     Box appdataBox = Hive.box("appdata");
     int jahrgang = appdataBox.get("jahrgang");
     List<String> selectedCourses =
@@ -47,22 +51,48 @@ class Timetable {
         bool addedcourse = false;
         for (var course in selectedCourses) {
           if (allcoursesinlesson!.containsKey(course)) {
-            dailytimetable.add(TimetableLesson(coursename: course, raum: ""));
+            dailytimetable.add(TimetableLesson(
+                coursename: course, raum: "", stunde: (h + 1).toString()));
             addedcourse = true;
             break;
           }
         }
         !addedcourse
-            ? dailytimetable.add(TimetableLesson(coursename: "", raum: ""))
+            ? dailytimetable.add(TimetableLesson(
+                coursename: "---",
+                raum: "---",
+                stunde: h.toString(),
+                emptyEntry: true))
             : {};
       }
       timetable
           .add(TimetableWeekday(dailytimetable: dailytimetable, dayofweek: d));
     }
+    Timetable ttmbl = Timetable(timetable: timetable);
+    ttmbl.cleanUpTimeTable();
+    await appdataBox.put("timetable", ttmbl).then((value) {
+      Fluttertoast.showToast(
+        msg: "created timetable",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor:
+            Theme.of(navigatorKey.currentContext!).colorScheme.primaryContainer,
+        textColor: Theme.of(navigatorKey.currentContext!)
+            .colorScheme
+            .onPrimaryContainer,
+      );
+    });
+  }
 
-    await appdataBox.put("timetable", Timetable(timetable: timetable));
-    print(" S A V E D  -  T I M E T A B L E");
-
-    return Timetable(timetable: timetable);
+  /// Removes all emptyEntry's from the end of each TimetableWeekday
+  void cleanUpTimeTable() {
+    for (var weekdayTTBL in timetable) {
+      for (int i = weekdayTTBL.dailytimetable.length - 1; i >= 0; i--) {
+        if (weekdayTTBL.dailytimetable[i].emptyEntry) {
+          weekdayTTBL.dailytimetable.removeAt(i);
+        } else {
+          break;
+        }
+      }
+    }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gbevplan/components/empty_widget.dart';
 import 'package:gbevplan/pages/home_screens/home_page_vplan.dart';
 
 class Home extends StatefulWidget {
@@ -15,26 +14,21 @@ class _HomeState extends State<Home> {
   final int _selectedIndex = 1;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.surfaceContainer));
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       floatingActionButton: FloatingActionButton(
-        elevation: 0,
+        // elevation: 0,
         onPressed: () => {Navigator.pushNamed(context, "/home/ogtt")},
         enableFeedback: true,
         child: const Icon(Icons.open_in_new_outlined),
       ),
-      // primary:
-      //     true, // Is nessesary that the body does not get under the system tray
-      appBar: const EmptyWidget(), // ^^
+      appBar: AppBar(
+        toolbarHeight: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            systemNavigationBarColor:
+                Theme.of(context).colorScheme.surfaceContainer),
+      ),
       body: const HomePageVplan(),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (value) => {
@@ -55,7 +49,7 @@ class _HomeState extends State<Home> {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: const [
           NavigationDestination(
-              icon: Icon(Icons.newspaper_rounded), label: "news"),
+              icon: Icon(Icons.newspaper_rounded), label: "stats"),
           NavigationDestination(
               icon: Icon(Icons.view_list_rounded), label: "vplan"),
           NavigationDestination(

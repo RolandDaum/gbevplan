@@ -24,8 +24,8 @@ class _SetupPageJahrgangselectionState
               delegates: LottieDelegates(
                 values: [
                   // keyPath order: ['layer name', 'group name', 'shape name']
-                  ValueDelegate.color(const ["**", "**", "**"],
-                      value: Theme.of(context).colorScheme.onSurface),
+                  ValueDelegate.color(const ["**"],
+                      value: Theme.of(context).colorScheme.onSurfaceVariant),
                 ],
               ),
               fit: BoxFit.fill),

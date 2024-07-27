@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gbevplan/Objects/timetable_lesson.dart';
 
 class BottomSheeetLesson extends StatelessWidget {
-  // final Object fach;
-  // const BottomSheeetLesson({super.key, required this.fach});
-
-  // TODO: Later add Lesson Subject Object with all the information
-  const BottomSheeetLesson({super.key});
+  final TimetableLesson ttbllesson;
+  const BottomSheeetLesson({super.key, required this.ttbllesson});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +29,7 @@ class BottomSheeetLesson extends StatelessWidget {
                       style: tsOverline,
                     ),
                     Text(
-                      "Mathe LK 1",
+                      ttbllesson.coursename,
                       style: tsHeadline,
                     )
                   ],
@@ -52,7 +50,7 @@ class BottomSheeetLesson extends StatelessWidget {
                       style: tsOverline,
                     ),
                     Text(
-                      "Oberstufentrakt 006",
+                      ttbllesson.raum,
                       style: tsHeadline,
                     )
                   ],
@@ -73,7 +71,7 @@ class BottomSheeetLesson extends StatelessWidget {
                       style: tsOverline,
                     ),
                     Text(
-                      "Karl Helge Lang",
+                      "",
                       style: tsHeadline,
                     )
                   ],
@@ -94,7 +92,7 @@ class BottomSheeetLesson extends StatelessWidget {
                       style: tsOverline,
                     ),
                     Text(
-                      "Buch Seite 123 Nr.1,2,3a-c",
+                      "",
                       style: tsHeadline,
                     )
                   ],

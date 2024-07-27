@@ -118,6 +118,5 @@ void transfareData() {
       allcourses.add(course);
     });
   });
-  print(allcourses);
   db.collection("2023-24-2").doc("12").set({"all_courses": allcourses});
 }

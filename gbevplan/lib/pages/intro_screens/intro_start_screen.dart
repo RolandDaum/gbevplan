@@ -68,8 +68,9 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          const EmptyWidget(), // Else the body will clip behind the status bar
+      appBar: AppBar(
+        toolbarHeight: 0,
+      ),
       extendBody: false,
       extendBodyBehindAppBar: false,
       body: Stack(alignment: Alignment.bottomCenter, children: [

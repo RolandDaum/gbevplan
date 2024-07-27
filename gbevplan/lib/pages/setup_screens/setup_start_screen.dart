@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gbevplan/Objects/timetable.dart';
 import 'package:gbevplan/components/bulletlist.dart';
 import 'package:gbevplan/components/empty_widget.dart';
@@ -6,7 +7,7 @@ import 'package:gbevplan/pages/intro_screens/intro_page.dart';
 import 'package:gbevplan/pages/setup_screens/setup_page_courseselection.dart';
 import 'package:gbevplan/pages/setup_screens/setup_page_jahrgangselection.dart';
 import 'package:hive/hive.dart';
-
+import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SetupStartScreen extends StatefulWidget {
@@ -42,91 +43,118 @@ class _SetupStartScreenState extends State<SetupStartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          const EmptyWidget(), // Else the body will clip behind the status bar
+      appBar: AppBar(
+        toolbarHeight: 0,
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SmoothPageIndicator(
+              controller: _controller,
+              count: setuppages.length,
+              effect: ExpandingDotsEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  dotColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                  activeDotColor: Theme.of(context).colorScheme.onSurface),
+              onDotClicked: (value) {
+                _controller.animateToPage(value,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut);
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+              child: FilledButton(
+                  onPressed: () {
+                    if (_currentpage != setuppages.length - 1) {
+                      switch (_currentpage) {
+                        case 1:
+                          if (appdataBox.get("jahrgang") >= 5) {
+                            _controller.animateToPage(
+                                _controller.page!.toInt() + 1,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut);
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "kein Jahrgang ausgewählt",
+                              toastLength: Toast.LENGTH_SHORT,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.errorContainer,
+                              textColor: Theme.of(context)
+                                  .colorScheme
+                                  .onErrorContainer,
+                            );
+                          }
+                          break;
+                        default:
+                          _controller.animateToPage(
+                              _controller.page!.toInt() + 1,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut);
+                          break;
+                      }
+                    } else {
+                      if (appdataBox.get("jahrgang") >= 5) {
+                        showDialog(
+                            context: context,
+                            // barrierDismissible: false,
+                            builder: (_) => Container(
+                                  height: 60,
+                                  width: 60,
+                                  child: Lottie.asset(
+                                    "assets/lottie/animation_loading_circle.json",
+                                    delegates: LottieDelegates(
+                                      values: [
+                                        // keyPath order: ['layer name', 'group name', 'shape name']
+                                        ValueDelegate.color(
+                                            const ["**", "**", "**"],
+                                            value: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface),
+                                      ],
+                                    ),
+                                  ),
+                                )); // TODO Proper save data method
+                        Timetable.createTimetable().then((value) {
+                          appdataBox.put("initBoot", false);
+
+                          Navigator.pushReplacementNamed(
+                              // TODO: Add loading screen -> for calculating personal timetable
+                              context,
+                              "/home");
+                        });
+                      }
+                    }
+                  },
+                  child: Container(
+                      alignment: Alignment.center,
+                      width: 150,
+                      child: _currentpage != setuppages.length - 1
+                          ? const Text("weiter")
+                          : const Text("fertig"))),
+            ),
+          ],
+        ),
+      ),
       extendBody: false,
       extendBodyBehindAppBar: false,
-      body: Stack(alignment: Alignment.bottomCenter, children: [
-        PageView(
-          onPageChanged: (value) {
-            setState(() {
-              _currentpage = value;
-            });
-          },
-          controller: _controller,
-          children: setuppages,
-        ),
-        // TODO: Once true the ui becomes unuseable with an open keyboard.
-        MediaQuery.of(context).viewInsets.bottom == 0
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SmoothPageIndicator(
-                    controller: _controller,
-                    count: setuppages.length,
-                    effect: ExpandingDotsEffect(
-                        dotHeight: 8,
-                        dotWidth: 8,
-                        dotColor:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
-                        activeDotColor:
-                            Theme.of(context).colorScheme.onSurface),
-                    onDotClicked: (value) {
-                      _controller.animateToPage(value,
-                          duration: Durations.medium1, curve: Curves.easeInOut);
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 32, horizontal: 24),
-                    child: FilledButton(
-                        onPressed: () {
-                          if (_currentpage != setuppages.length - 1) {
-                            switch (_currentpage) {
-                              case 1:
-                                if (appdataBox.get("jahrgang") >= 5) {
-                                  _controller.animateToPage(
-                                      _controller.page!.toInt() + 1,
-                                      duration: Durations.medium1,
-                                      curve: Curves.easeInOut);
-                                } else {
-                                  // TODO: add bottom pop up notification thing, if no grade has been selected
-                                }
-                                break;
-                              default:
-                                _controller.animateToPage(
-                                    _controller.page!.toInt() + 1,
-                                    duration: Durations.medium1,
-                                    curve: Curves.easeInOut);
-                                break;
-                            }
-                          } else {
-                            if (appdataBox.get("jahrgang") >= 5) {
-                              // TODO Proper save data method
-                              appdataBox.put("initBoot", false);
-                              Timetable.createTimetable().then((value) {
-                                Navigator.pushReplacementNamed(
-                                    // TODO: Add loading screen -> for calculating personal timetable
-                                    context,
-                                    "/home");
-                              });
-                            }
-                          }
-                        },
-                        child: Container(
-                            alignment: Alignment.center,
-                            width: 150,
-                            child: _currentpage != setuppages.length - 1
-                                ? const Text("weiter")
-                                : const Text("fertig"))),
-                  ),
-                ],
-              )
-            : const EmptyWidget()
-      ]),
+      body: Stack(
+        children: [
+          PageView(
+            onPageChanged: (value) {
+              setState(() {
+                _currentpage = value;
+              });
+            },
+            controller: _controller,
+            children: setuppages,
+          ),
+        ],
+      ),
     );
   }
 }
-
-// var appdataBOX = Hive.box("appdata");
-// appdataBOX.put("initBoot", false);

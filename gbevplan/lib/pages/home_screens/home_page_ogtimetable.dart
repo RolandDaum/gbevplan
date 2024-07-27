@@ -41,7 +41,6 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
         .ref('/credentials/suuid')
         .once()
         .then((event) => {
-              // print(event.snapshot.value.toString()),
               url =
                   'https://dsbmobile.de/data/${event.snapshot.value.toString()}/${uuidList.elementAt(selectedUUID)}/${uuidList.elementAt(selectedUUID)}.htm'
             });
@@ -50,22 +49,11 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
     });
   }
 
-  @override
-  void deactivate() {
-    super.deactivate();
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.surfaceContainer));
-  }
-
   final WebViewController _webviewController = WebViewController()
     ..setBackgroundColor(Colors.transparent)
     ..setNavigationDelegate(
       NavigationDelegate(
-        onProgress: (int progress) {
-          // print("|-|-|-| - " + progress.toString());
-        },
+        onProgress: (int progress) {},
         // onPageStarted: (String url) {},
         // onPageFinished: (String url) {},
         // onHttpError: (HttpResponseError error) {},

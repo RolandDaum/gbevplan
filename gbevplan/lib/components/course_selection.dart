@@ -1,15 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gbevplan/Objects/timetable.dart';
 import 'package:hive/hive.dart';
 
 class CourseSelection extends StatefulWidget {
   final List<String> selectedKurse;
   final Function(List<String>)? onSelectionChange;
+  final bool createTimeTableOnDispose;
 
   const CourseSelection(
-      {super.key, this.selectedKurse = const [], this.onSelectionChange});
+      {super.key,
+      this.selectedKurse = const [],
+      this.onSelectionChange,
+      this.createTimeTableOnDispose = true});
 
   @override
   State<CourseSelection> createState() => _CourseSelectionState();
@@ -47,7 +52,7 @@ class _CourseSelectionState extends State<CourseSelection> {
   }
 
   @override
-  void didUpdateWidget(covariant CourseSelection oldWidget) {
+  didUpdateWidget(covariant CourseSelection oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     calcNonSelectedKurse();
@@ -58,26 +63,24 @@ class _CourseSelectionState extends State<CourseSelection> {
     if (widget.selectedKurse.isEmpty) {
       selectedKurse = appdataBox.get("selectedKurse").cast<String>();
     } else {
-      selectedKurse.addAll(widget.selectedKurse);
+      selectedKurse = widget.selectedKurse;
     }
     nonselectedKurse = [];
-    nonselectedKurse.addAll(allekurse);
+    nonselectedKurse = allekurse;
     for (var kurs in selectedKurse) {
       nonselectedKurse.remove(kurs);
     }
-    setState(() {
-      nonselectedKurse;
-    });
+    setState(() {});
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    print(" D I S P O S I n G  -  COURESE DRPOWOND");
-
     appdataBox.put("selectedKurse", selectedKurse);
-    Timetable.createTimetable();
+    if (widget.createTimeTableOnDispose) {
+      Timetable.createTimetable();
+    }
   }
 
   @override

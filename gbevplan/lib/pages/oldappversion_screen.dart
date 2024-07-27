@@ -36,7 +36,9 @@ class _OldappversionScreenState extends State<OldappversionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const EmptyWidget(),
+      appBar: AppBar(
+        toolbarHeight: 0,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),

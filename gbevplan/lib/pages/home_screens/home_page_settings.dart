@@ -38,7 +38,6 @@ class HomeSettingsState extends State<HomeSettings> {
     return Scaffold(
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle(
-              // If the scafflod uses an appBar, the system Overlay Style has to be declerated in it else just do it over chromeoption thing what ever, befor returning inside the build method
               systemNavigationBarColor: Theme.of(context).colorScheme.surface),
           title: const Text("settings"),
         ),

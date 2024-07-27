@@ -70,14 +70,15 @@ class _page_loginState extends State<page_login> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor: Theme.of(context).colorScheme.surface,
-        statusBarColor: Theme.of(context).colorScheme.surface));
-
     return Scaffold(
-      // resizeToAvoidBottomInset: true,
-      extendBody: true,
-      // extendBodyBehindAppBar: true,
+      appBar: AppBar(
+          toolbarHeight: 0,
+          systemOverlayStyle: Theme.of(context)
+              .appBarTheme
+              .systemOverlayStyle!
+              .copyWith(
+                systemNavigationBarColor: Theme.of(context).colorScheme.surface,
+              )),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

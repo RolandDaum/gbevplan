@@ -19,17 +19,26 @@ class TimetableLessonAdapter extends TypeAdapter<TimetableLesson> {
     return TimetableLesson(
       coursename: fields[0] as String,
       raum: fields[1] as String,
+      stunde: fields[2] as String,
+      replacedFach: fields[3] as String,
+      emptyEntry: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, TimetableLesson obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.coursename)
       ..writeByte(1)
-      ..write(obj.raum);
+      ..write(obj.raum)
+      ..writeByte(2)
+      ..write(obj.stunde)
+      ..writeByte(3)
+      ..write(obj.replacedFach)
+      ..writeByte(4)
+      ..write(obj.emptyEntry);
   }
 
   @override

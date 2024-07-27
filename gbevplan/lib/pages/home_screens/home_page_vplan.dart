@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gbevplan/Objects/timetable.dart';
+import 'package:gbevplan/Objects/timetable_lesson.dart';
 import 'package:gbevplan/components/bottomsheet_lesson.dart';
 import 'package:gbevplan/components/timetable_entry.dart';
 import 'package:hive/hive.dart';
@@ -15,7 +16,7 @@ class _HomePageVplanState extends State<HomePageVplan>
     with TickerProviderStateMixin {
   Box appdataBox = Hive.box("appdata");
 
-  int _subjSelecIndex = 0;
+  int _subjSelecIndex = -1;
   int currentWDSelection = 0;
 
   late Timetable timetable;
@@ -34,6 +35,10 @@ class _HomePageVplanState extends State<HomePageVplan>
     currentWDSelection = currentWeekday > 4 ? 0 : currentWeekday;
 
     DateTime currentDT = DateTime.now();
+    if (currentWeekday > 4) {
+      _subjSelecIndex = -1;
+      return;
+    }
     if (currentDT.isAfter(
         DateTime(currentDT.year, currentDT.month, currentDT.day, 7, 40))) {
       _subjSelecIndex++;
@@ -82,12 +87,35 @@ class _HomePageVplanState extends State<HomePageVplan>
         DateTime(currentDT.year, currentDT.month, currentDT.day, 16, 55))) {
       _subjSelecIndex = -1;
     }
+
+    setState(() {
+      currentWDSelection;
+      _subjSelecIndex;
+    });
+  }
+
+  void openLessonBottomSheet(TimetableLesson ttbllesson) {
+    !ttbllesson.emptyEntry
+        ? showModalBottomSheet(
+            isScrollControlled:
+                false, // if enabled -> Bottom Sheet becomes full screen sheet
+            scrollControlDisabledMaxHeightRatio: .5,
+            showDragHandle: true,
+            enableDrag: true,
+            context: context,
+            builder: (BuildContext context) {
+              return BottomSheeetLesson(
+                ttbllesson: ttbllesson,
+              );
+            }).then((value) {})
+        : {};
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
+        setCurrentTime();
         setState(() {
           timetable = appdataBox.get("timetable");
         });
@@ -148,18 +176,20 @@ class _HomePageVplanState extends State<HomePageVplan>
                   });
                 }),
           ),
-          const TimeTableEntry(
-            stunde: "stunde",
-            raum: "raum",
-            fach: "fach",
-            stfach: "st. fach",
+          TimeTableEntry(
+            timeTableLesson: TimetableLesson(
+                coursename: "fach",
+                raum: "raum",
+                stunde: "stunde",
+                replacedFach: "st. fach"),
             stfachLineThrough: false,
             headline: true,
           ),
           const Divider(),
           Expanded(
             child: ListView.builder(
-                itemCount: 11,
+                itemCount: timetable
+                    .timetable[currentWDSelection].dailytimetable.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
                     children: [
@@ -167,35 +197,21 @@ class _HomePageVplanState extends State<HomePageVplan>
                         onTap: () => {
                           if (index == _subjSelecIndex)
                             {
-                              showModalBottomSheet(
-                                  isScrollControlled:
-                                      false, // if enabled -> Bottom Sheet becomes full screen sheet
-                                  scrollControlDisabledMaxHeightRatio: .5,
-                                  showDragHandle: true,
-                                  enableDrag: true,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const BottomSheeetLesson();
-                                  }).then((value) {}),
+                              openLessonBottomSheet(timetable
+                                  .timetable[currentWDSelection]
+                                  .dailytimetable[index])
                             }
                         },
                         onDoubleTap: () {
-                          showModalBottomSheet(
-                              isScrollControlled:
-                                  false, // if enabled -> Bottom Sheet becomes full screen sheet
-                              scrollControlDisabledMaxHeightRatio: .5,
-                              showDragHandle: true,
-                              enableDrag: true,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const BottomSheeetLesson();
-                              }).then((value) {});
+                          openLessonBottomSheet(timetable
+                              .timetable[currentWDSelection]
+                              .dailytimetable[index]);
                         },
                         child: Card.filled(
                           color: index == _subjSelecIndex
                               ? Theme.of(context)
                                   .colorScheme
-                                  .surfaceContainerLow
+                                  .secondaryContainer // Highlighted Lesson
                               : Colors.transparent,
                           child: Padding(
                             padding: index == _subjSelecIndex
@@ -204,29 +220,28 @@ class _HomePageVplanState extends State<HomePageVplan>
                                 : const EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 8),
                             child: TimeTableEntry(
-                              stunde: (index + 1).toString(),
-                              raum: timetable.timetable[currentWDSelection]
-                                  .dailytimetable[index].raum,
-                              fach: timetable.timetable[currentWDSelection]
-                                  .dailytimetable[index].coursename,
-                              stfach: "",
+                              timeTableLesson: timetable
+                                  .timetable[currentWDSelection]
+                                  .dailytimetable[index],
                               highlighted:
                                   index == _subjSelecIndex ? true : false,
                             ),
                           ),
                         ),
                       ),
-                      index == 11 - 1 ||
-                              index == _subjSelecIndex - 1 ||
-                              index == _subjSelecIndex
-                          ? const Divider(
-                              height: 0,
-                              color: Colors.transparent,
-                            )
-                          : const Divider(
-                              indent: 20,
-                              endIndent: 20,
-                            )
+                      index == _subjSelecIndex - 1 || index == _subjSelecIndex
+                          ? const Divider()
+                          : index ==
+                                  timetable.timetable[currentWDSelection]
+                                          .dailytimetable.length -
+                                      1
+                              ? const Divider(
+                                  color: Colors.transparent,
+                                )
+                              : const Divider(
+                                  indent: 20,
+                                  endIndent: 20,
+                                )
                     ],
                   );
                 }),

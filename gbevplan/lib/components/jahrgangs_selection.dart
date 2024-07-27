@@ -12,6 +12,21 @@ class Jahrgangsselection extends StatefulWidget {
 class _JahrgangsselectionState extends State<Jahrgangsselection> {
   TextEditingController tecJahrgangSelection = TextEditingController();
   Box appdataBox = Hive.box("appdata");
+  late int selectedJahrgang;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // TODO: Add proper jahrgangscontroll
+    int tmpSelectedJahrgang = appdataBox.get("jahrgang");
+    if (widget.selectedJahrgang == 0 && tmpSelectedJahrgang != 0) {
+      selectedJahrgang = tmpSelectedJahrgang;
+    } else {
+      selectedJahrgang = widget.selectedJahrgang;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DropdownMenu(
@@ -31,11 +46,10 @@ class _JahrgangsselectionState extends State<Jahrgangsselection> {
       controller: tecJahrgangSelection,
       label: const Text("Jahrgang"),
       enableSearch: false,
-      initialSelection: widget.selectedJahrgang,
+      initialSelection: selectedJahrgang,
       enableFilter: false,
       requestFocusOnTap: false,
       onSelected: (value) {
-        print(" s a v i n g  -  j a h r g a n g ");
         appdataBox.put("jahrgang", value);
       },
     );

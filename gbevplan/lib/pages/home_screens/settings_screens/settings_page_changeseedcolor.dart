@@ -16,7 +16,7 @@ class _ChangeseedcolorState extends State<Changeseedcolor> {
   double blueValue = 0;
   bool loadedSeedColorFromHive = false;
   late Color prevSeedColor;
-
+  // TODO: Add option to load system colors as seed color
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gbevplan/Objects/timetable.dart';
 import 'package:gbevplan/components/course_selection.dart';
 import 'package:gbevplan/components/empty_widget.dart';
 import 'package:gbevplan/components/jahrgangs_selection.dart';
@@ -26,16 +23,8 @@ class _EditttbState extends State<Editttb> {
   void initState() {
     super.initState();
 
-    selectedKurse = appdataBox.get("selectedKurse");
+    selectedKurse = appdataBox.get("selectedKurse").cast<String>();
     jahrgang = appdataBox.get("jahrgang");
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    appdataBox.put("selectedKurse", selectedKurse);
-    Timetable.createTimetable();
   }
 
   @override
