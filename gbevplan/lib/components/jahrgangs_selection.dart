@@ -18,7 +18,6 @@ class _JahrgangsselectionState extends State<Jahrgangsselection> {
   void initState() {
     super.initState();
 
-    // TODO: Add proper jahrgangscontroll
     int tmpSelectedJahrgang = appdataBox.get("jahrgang");
     if (widget.selectedJahrgang == 0 && tmpSelectedJahrgang != 0) {
       selectedJahrgang = tmpSelectedJahrgang;

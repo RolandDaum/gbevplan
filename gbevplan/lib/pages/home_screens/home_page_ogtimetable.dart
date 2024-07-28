@@ -96,7 +96,7 @@ class _HomeOGTimeTableState extends State<HomeOGTimeTable> {
         systemOverlayStyle: SystemUiOverlayStyle(
             // If the scafflod uses an appBar, the system Overlay Style has to be declerated in it else just do it over chromeoption thing what ever, befor returning inside the build method
             systemNavigationBarColor: Theme.of(context).colorScheme.surface),
-        title: const Text("Montag - 13:28"),
+        title: const Text("Montag - 13:28"), // Dynmaic ttbl
       ),
       body: ClipRRect(
           borderRadius: BorderRadius.circular(8),

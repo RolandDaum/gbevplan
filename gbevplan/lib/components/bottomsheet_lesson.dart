@@ -99,27 +99,27 @@ class BottomSheeetLesson extends StatelessWidget {
                 ),
               ),
             ),
-            Card.filled(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              elevation: 0,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "P L A C E H O L D E R",
-                      style: tsOverline,
-                    ),
-                    Text(
-                      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
-                      style: tsHeadline,
-                    )
-                  ],
-                ),
-              ),
-            ),
+            // Card.filled(
+            //   color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            //   elevation: 0,
+            //   child: Padding(
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Text(
+            //           "P L A C E H O L D E R",
+            //           style: tsOverline,
+            //         ),
+            //         Text(
+            //           "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+            //           style: tsHeadline,
+            //         )
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ]),
     );
   }

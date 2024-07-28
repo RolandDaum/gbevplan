@@ -27,18 +27,18 @@ class _SetupPageCourseselectionState extends State<SetupPageCourseselection>
   }
 
   @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
   void didChangeMetrics() {
     super.didChangeMetrics();
     final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
     setState(() {
       isKeyboardVisible = bottomInset > 0.0;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override

@@ -186,6 +186,7 @@ class _HomePageVplanState extends State<HomePageVplan>
             headline: true,
           ),
           const Divider(),
+          // TODO: Make the timetable horizontal scrollable
           Expanded(
             child: ListView.builder(
                 itemCount: timetable

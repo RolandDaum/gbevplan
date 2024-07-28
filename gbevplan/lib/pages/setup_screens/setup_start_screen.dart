@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gbevplan/Objects/timetable.dart';
 import 'package:gbevplan/components/bulletlist.dart';
-import 'package:gbevplan/components/empty_widget.dart';
 import 'package:gbevplan/pages/intro_screens/intro_page.dart';
 import 'package:gbevplan/pages/setup_screens/setup_page_courseselection.dart';
 import 'package:gbevplan/pages/setup_screens/setup_page_jahrgangselection.dart';
@@ -41,6 +42,16 @@ class _SetupStartScreenState extends State<SetupStartScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  void _animatePage(int pageINT) {
+    _controller.animateToPage(pageINT,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -61,9 +72,7 @@ class _SetupStartScreenState extends State<SetupStartScreen> {
                   dotColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   activeDotColor: Theme.of(context).colorScheme.onSurface),
               onDotClicked: (value) {
-                _controller.animateToPage(value,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut);
+                _animatePage(value);
               },
             ),
             Padding(
@@ -71,62 +80,55 @@ class _SetupStartScreenState extends State<SetupStartScreen> {
               child: FilledButton(
                   onPressed: () {
                     if (_currentpage != setuppages.length - 1) {
-                      switch (_currentpage) {
-                        case 1:
-                          if (appdataBox.get("jahrgang") >= 5) {
-                            _controller.animateToPage(
-                                _controller.page!.toInt() + 1,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeInOut);
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "kein Jahrgang ausgewählt",
-                              toastLength: Toast.LENGTH_SHORT,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.errorContainer,
-                              textColor: Theme.of(context)
-                                  .colorScheme
-                                  .onErrorContainer,
-                            );
-                          }
-                          break;
-                        default:
-                          _controller.animateToPage(
-                              _controller.page!.toInt() + 1,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut);
-                          break;
-                      }
+                      _controller.animateToPage(_controller.page!.toInt() + 1,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut);
                     } else {
                       if (appdataBox.get("jahrgang") >= 5) {
                         showDialog(
                             context: context,
-                            // barrierDismissible: false,
-                            builder: (_) => Container(
-                                  height: 60,
-                                  width: 60,
-                                  child: Lottie.asset(
-                                    "assets/lottie/animation_loading_circle.json",
-                                    delegates: LottieDelegates(
-                                      values: [
-                                        // keyPath order: ['layer name', 'group name', 'shape name']
-                                        ValueDelegate.color(
-                                            const ["**", "**", "**"],
-                                            value: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface),
-                                      ],
+                            barrierDismissible: false,
+                            builder: (_) => PopScope(
+                                  canPop: false,
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                        sigmaX: 10, sigmaY: 10),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: SizedBox(
+                                        height: 150,
+                                        width: 150,
+                                        child: Lottie.asset(
+                                          "assets/lottie/animation_loading_circle.json",
+                                          delegates: LottieDelegates(
+                                            values: [
+                                              // keyPath order: ['layer name', 'group name', 'shape name']
+                                              ValueDelegate.color(
+                                                  const ["**", "**", "**"],
+                                                  value: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 )); // TODO Proper save data method
                         Timetable.createTimetable().then((value) {
                           appdataBox.put("initBoot", false);
-
-                          Navigator.pushReplacementNamed(
-                              // TODO: Add loading screen -> for calculating personal timetable
-                              context,
-                              "/home");
+                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(context, "/home");
                         });
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: "kein Jahrgang ausgewählt",
+                          toastLength: Toast.LENGTH_SHORT,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.errorContainer,
+                          textColor:
+                              Theme.of(context).colorScheme.onErrorContainer,
+                        );
                       }
                     }
                   },

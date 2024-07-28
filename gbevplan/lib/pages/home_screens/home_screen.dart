@@ -2,23 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/pages/home_screens/home_page_vplan.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _HomeState createState() => _HomeState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
   final int _selectedIndex = 1;
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Add toggle for notifications
     return Scaffold(
       extendBody: true,
       floatingActionButton: FloatingActionButton(
-        // elevation: 0,
         onPressed: () => {Navigator.pushNamed(context, "/home/ogtt")},
         enableFeedback: true,
         child: const Icon(Icons.open_in_new_outlined),
@@ -49,7 +48,7 @@ class _HomeState extends State<Home> {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: const [
           NavigationDestination(
-              icon: Icon(Icons.newspaper_rounded), label: "stats"),
+              icon: Icon(Icons.pie_chart_rounded), label: "stats"),
           NavigationDestination(
               icon: Icon(Icons.view_list_rounded), label: "vplan"),
           NavigationDestination(

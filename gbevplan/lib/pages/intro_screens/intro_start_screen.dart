@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gbevplan/components/bulletlist.dart';
-import 'package:gbevplan/components/empty_widget.dart';
 import 'package:gbevplan/pages/intro_screens/intro_page.dart';
 import 'package:hive/hive.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -65,6 +64,11 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   }
 
+  void _animatePage(int pageINT) {
+    _controller.animateToPage(pageINT,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,25 +77,10 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
       ),
       extendBody: false,
       extendBodyBehindAppBar: false,
-      body: Stack(alignment: Alignment.bottomCenter, children: [
-        PageView(
-          onPageChanged: (value) {
-            setState(() {
-              _currentpage = value;
-            });
-          },
-          controller: _controller,
-          children: intropages,
-        ),
-        Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            alignment: Alignment.topRight,
-            child: TextButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, "/setupstart");
-                },
-                child: const Text("überspringen"))),
-        Column(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SmoothPageIndicator(
@@ -103,17 +92,15 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
                   dotColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   activeDotColor: Theme.of(context).colorScheme.onSurface),
               onDotClicked: (value) {
-                _controller.animateToPage(value,
-                    duration: Durations.medium1, curve: Curves.easeInOut);
+                _animatePage(value);
               },
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
               child: FilledButton(
                   onPressed: () {
                     if (_currentpage != intropages.length - 1) {
-                      _controller.animateToPage(_controller.page!.toInt() + 1,
-                          duration: Durations.medium1, curve: Curves.easeInOut);
+                      _animatePage(_currentpage + 1);
                     } else {
                       Navigator.pushReplacementNamed(context, "/setupstart");
                     }
@@ -123,11 +110,32 @@ class _IntroStartScreenState extends State<IntroStartScreen> {
                       width: 150,
                       child: _currentpage != intropages.length - 1
                           ? const Text("weiter")
-                          : const Text("einrichten"))),
+                          : const Text("einrichtung"))),
             ),
           ],
-        )
-      ]),
+        ),
+      ),
+      body: Stack(
+        children: [
+          PageView(
+            onPageChanged: (value) {
+              setState(() {
+                _currentpage = value;
+              });
+            },
+            controller: _controller,
+            children: intropages,
+          ),
+          Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: Alignment.topRight,
+              child: TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, "/setupstart");
+                  },
+                  child: const Text("überspringen"))),
+        ],
+      ),
     );
   }
 }

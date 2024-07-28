@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gbevplan/Objects/timetable.dart';
+import 'package:gbevplan/main.dart';
 import 'package:hive/hive.dart';
 
 class CourseSelection extends StatefulWidget {
@@ -27,35 +28,39 @@ class _CourseSelectionState extends State<CourseSelection> {
   List<String> allekurse = [];
   List<String> nonselectedKurse = [];
   List<String> selectedKurse = [];
+  FocusNode dropdownFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
 
     jahrgang = appdataBox.get("jahrgang");
-
-    FirebaseDatabase.instance
-        .ref('/data/ttbyear')
-        .once()
-        .then((DatabaseEvent event) {
-      final db = FirebaseFirestore.instance;
-      db.databaseId = "database";
-      db
-          .collection(event.snapshot.value as String)
-          .doc(jahrgang.toString())
-          .get()
-          .then((value) {
-        allekurse = value.data()!["all_courses"].cast<String>();
-        calcNonSelectedKurse();
+    if (!(jahrgang >= 5)) {
+      Fluttertoast.showToast(
+        msg: "kein Jahrgang ausgewählt",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor:
+            Theme.of(navigatorKey.currentContext!).colorScheme.errorContainer,
+        textColor:
+            Theme.of(navigatorKey.currentContext!).colorScheme.onErrorContainer,
+      );
+    } else {
+      FirebaseDatabase.instance
+          .ref('/data/ttbyear')
+          .once()
+          .then((DatabaseEvent event) {
+        final db = FirebaseFirestore.instance;
+        db.databaseId = "database";
+        db
+            .collection(event.snapshot.value as String)
+            .doc(jahrgang.toString())
+            .get()
+            .then((value) {
+          allekurse = value.data()!["all_courses"].cast<String>();
+          calcNonSelectedKurse();
+        });
       });
-    });
-  }
-
-  @override
-  didUpdateWidget(covariant CourseSelection oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    calcNonSelectedKurse();
+    }
   }
 
   void calcNonSelectedKurse() {
@@ -77,6 +82,8 @@ class _CourseSelectionState extends State<CourseSelection> {
   void dispose() {
     super.dispose();
 
+    tecKursSelection.dispose();
+
     appdataBox.put("selectedKurse", selectedKurse);
     if (widget.createTimeTableOnDispose) {
       Timetable.createTimetable();
@@ -85,31 +92,38 @@ class _CourseSelectionState extends State<CourseSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownMenu(
-      dropdownMenuEntries:
-          nonselectedKurse.map<DropdownMenuEntry<String>>((String value) {
-        return DropdownMenuEntry<String>(
-          value: value,
-          label: value,
-        );
-      }).toList(),
-      width: 250,
-      menuHeight: 200,
-      controller: tecKursSelection,
-      label: const Text("Kurse"),
-      enableSearch: true,
-      enableFilter: true,
-      requestFocusOnTap: true,
-      onSelected: (value) {
-        setState(() {
-          nonselectedKurse.remove(value);
-          selectedKurse.add(value!);
-          if (widget.onSelectionChange != null) {
-            widget.onSelectionChange!(selectedKurse);
-          }
-          tecKursSelection.text = "";
-        });
+    return TapRegion(
+      onTapOutside: (value) {
+        // TODO: Not optimal -> unfocusing on dropdown list selection -> but works, so the DropdownMenu is getting disposed because for that it has to be unfocused
+        dropdownFocusNode.unfocus();
       },
+      child: DropdownMenu(
+        focusNode: dropdownFocusNode,
+        dropdownMenuEntries:
+            nonselectedKurse.map<DropdownMenuEntry<String>>((String value) {
+          return DropdownMenuEntry<String>(
+            value: value,
+            label: value,
+          );
+        }).toList(),
+        width: 250,
+        menuHeight: 200,
+        controller: tecKursSelection,
+        label: const Text("Kurse"),
+        enableSearch: true,
+        enableFilter: true,
+        requestFocusOnTap: true,
+        onSelected: (value) {
+          setState(() {
+            nonselectedKurse.remove(value);
+            selectedKurse.add(value!);
+            if (widget.onSelectionChange != null) {
+              widget.onSelectionChange!(selectedKurse);
+            }
+            tecKursSelection.text = "";
+          });
+        },
+      ),
     );
   }
 }

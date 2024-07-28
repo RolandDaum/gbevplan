@@ -52,7 +52,9 @@ class Timetable {
         for (var course in selectedCourses) {
           if (allcoursesinlesson!.containsKey(course)) {
             dailytimetable.add(TimetableLesson(
-                coursename: course, raum: "", stunde: (h + 1).toString()));
+                coursename: course,
+                raum: allcoursesinlesson![course]["raum"],
+                stunde: (h + 1).toString()));
             addedcourse = true;
             break;
           }
@@ -61,7 +63,7 @@ class Timetable {
             ? dailytimetable.add(TimetableLesson(
                 coursename: "---",
                 raum: "---",
-                stunde: h.toString(),
+                stunde: (h + 1).toString(),
                 emptyEntry: true))
             : {};
       }

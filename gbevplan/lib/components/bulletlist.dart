@@ -4,51 +4,57 @@ class Bulletlist extends StatelessWidget {
   final List<Bulletpoint> data;
   final String bulletpointChar;
   final TextStyle? textstyle;
+  final EdgeInsetsGeometry padding;
 
-  Bulletlist({
-    super.key,
-    required this.data,
-    this.bulletpointChar = "•",
-    this.textstyle,
-  });
+  const Bulletlist(
+      {super.key,
+      required this.data,
+      this.bulletpointChar = "•",
+      this.textstyle,
+      this.padding = const EdgeInsets.all(0)});
 
   @override
   Widget build(BuildContext context) {
     final effectiveTextStyle =
         textstyle ?? Theme.of(context).textTheme.bodyLarge;
 
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: data.length,
-      physics: const NeverScrollableScrollPhysics(), // Disable scrolling
-      itemBuilder: (context, index) {
-        final indentLevel = data[index].indent;
-        final paddingSize = _getPaddingSize(indentLevel);
+    return Expanded(
+      child: Padding(
+        padding: padding,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: data.length,
+          // physics: const NeverScrollableScrollPhysics(), // Disable scrolling
+          itemBuilder: (context, index) {
+            final indentLevel = data[index].indent;
+            final paddingSize = _getPaddingSize(indentLevel);
 
-        return Padding(
-          padding: EdgeInsets.only(left: paddingSize)
-              .add(const EdgeInsets.symmetric(vertical: 8)),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Text(
-                  bulletpointChar,
-                  style:
-                      effectiveTextStyle?.copyWith(fontWeight: FontWeight.bold),
-                ),
+            return Padding(
+              padding: EdgeInsets.only(left: paddingSize)
+                  .add(const EdgeInsets.symmetric(vertical: 8)),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Text(
+                      bulletpointChar,
+                      style: effectiveTextStyle?.copyWith(
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      data[index].text,
+                      style: effectiveTextStyle,
+                    ),
+                  ),
+                ],
               ),
-              Flexible(
-                child: Text(
-                  data[index].text,
-                  style: effectiveTextStyle,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 

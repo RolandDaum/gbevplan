@@ -45,13 +45,10 @@ class IntroPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 32),
         child: Text(style: Theme.of(context).textTheme.displayMedium, headling),
       ),
-      Padding(
+      Bulletlist(
+        data: bulletlistData,
         padding: const EdgeInsets.symmetric(horizontal: 44),
-        child: Bulletlist(
-          data: bulletlistData,
-        ),
       )
     ]);
-    ;
   }
 }

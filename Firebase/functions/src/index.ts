@@ -176,18 +176,19 @@ async function saveUUIDsToDatabase(uuids: string[]): Promise<void> {
 async function sendNotification(uuids:string[]) {
   const message:Message = {
     notification: {
-      title: "New VPlan",
-      body: "new data",
+      title: "N e u e r - V P l a n",
+      body: "Ein neuer Vertretungsplan wurde veröffentlicht. Klicke hier um ihn zu öffnen.",
     },
     data: {
       uuids: uuids.toString(),
     },
     topic: "everyone",
-    android: {
-      notification: {
-        icon: "https://cdn.discordapp.com/attachments/1131545299291222037/1252956973335318559/Frame_6.png?ex=66741a9d&is=6672c91d&hm=559603924d4e07a5bbc4add388a4b8687438a1914be81d599df6246685e62215&",
-      },
-    },
+    // android: {
+    //   notification: {
+    //     // icon: "https://cdn.discordapp.com/attachments/1131545299291222037/1252956973335318559/
+    // Frame_6.png?ex=66741a9d&is=6672c91d&hm=559603924d4e07a5bbc4add388a4b8687438a1914be81d599df6246685e62215&",
+    //   },
+    // },
   };
   await admin.messaging().send(message).catch((error) => {
     log(`Error: ${error}`);

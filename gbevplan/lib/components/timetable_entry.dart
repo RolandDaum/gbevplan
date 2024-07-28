@@ -35,7 +35,7 @@ class TimeTableEntry extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(timeTableLesson.stunde.toString(), style: textstyle),
+          Text(timeTableLesson.stunde, style: textstyle),
           Text(timeTableLesson.raum, style: textstyle),
           Text(timeTableLesson.coursename, style: textstyle),
           Text(timeTableLesson.replacedFach,

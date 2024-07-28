@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:gbevplan/main.dart';
 import 'package:hive/hive.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -17,6 +17,7 @@ class _page_loginState extends State<page_login> {
   bool _remmevalue = false;
   TextEditingController tecUsername = TextEditingController();
   TextEditingController tecPassword = TextEditingController();
+  Box appdataBOX = Hive.box("appdata");
 
   @override
   void initState() {
@@ -31,16 +32,39 @@ class _page_loginState extends State<page_login> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is String) {
+      switch (args) {
+        case "qlogin":
+          if (appdataBOX.get("rememberme")) {
+            login(
+                username: appdataBOX.get("username"),
+                password: appdataBOX.get("password"),
+                openOGTTBL: true);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
   // ToDo: Add option for usage without login (maybe)
   // ToDo: Add auto login functionallity
-  Future<bool> login() async {
+  static Future<bool> login(
+      {required String username,
+      required String password,
+      bool openOGTTBL = false}) async {
     bool valid = true;
     await FirebaseDatabase.instance
         .ref('/credentials/username')
         .once()
         .then((DatabaseEvent event) {
-      String username = event.snapshot.value as String;
-      if (username != tecUsername.text) {
+      String _username = event.snapshot.value as String;
+      if (_username != username) {
         valid = false;
       }
     });
@@ -48,11 +72,43 @@ class _page_loginState extends State<page_login> {
         .ref('/credentials/password')
         .once()
         .then((DatabaseEvent event) {
-      String password = event.snapshot.value as String;
-      if (password != tecPassword.text) {
+      String _password = event.snapshot.value as String;
+      if (_password != password) {
         valid = false;
       }
     });
+
+    if (valid) {
+      Fluttertoast.showToast(
+        msg: "valid",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor:
+            Theme.of(navigatorKey.currentContext!).colorScheme.primaryContainer,
+        textColor: Theme.of(navigatorKey.currentContext!)
+            .colorScheme
+            .onPrimaryContainer,
+      );
+      Hive.box("appdata").get("initBoot")
+          ? Navigator.of(navigatorKey.currentContext!)
+              .popAndPushNamed('/introstart')
+          : Navigator.of(navigatorKey.currentContext!)
+              .popAndPushNamed('/home')
+              .then((value) {
+              openOGTTBL
+                  ? Navigator.of(navigatorKey.currentContext!)
+                      .pushNamed("/home/ogtt")
+                  : {};
+            });
+    } else {
+      Fluttertoast.showToast(
+        msg: "incorrect credentials",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor:
+            Theme.of(navigatorKey.currentContext!).colorScheme.errorContainer,
+        textColor:
+            Theme.of(navigatorKey.currentContext!).colorScheme.onErrorContainer,
+      );
+    }
     return valid;
   }
 
@@ -60,11 +116,13 @@ class _page_loginState extends State<page_login> {
   void dispose() {
     super.dispose();
 
-    var appdataBOX = Hive.box("appdata");
     appdataBOX.put("rememberme", _remmevalue);
     if (_remmevalue) {
       appdataBOX.put("username", tecUsername.text);
       appdataBOX.put("password", tecPassword.text);
+    } else {
+      appdataBOX.put("username", "");
+      appdataBOX.put("password", "");
     }
   }
 
@@ -107,36 +165,9 @@ class _page_loginState extends State<page_login> {
                   width: 225,
                   child: FilledButton(
                       onPressed: () => {
-                            login().then((valid) {
-                              if (valid) {
-                                Fluttertoast.showToast(
-                                  msg: "valid",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
-                                  textColor: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                );
-                                Hive.box("appdata").get("initBoot")
-                                    ? Navigator.of(context)
-                                        .popAndPushNamed('/introstart')
-                                    : Navigator.of(context)
-                                        .popAndPushNamed('/home');
-                              } else {
-                                Fluttertoast.showToast(
-                                  msg: "incorrect credentials",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .errorContainer,
-                                  textColor: Theme.of(context)
-                                      .colorScheme
-                                      .onErrorContainer,
-                                );
-                              }
-                            })
+                            login(
+                                username: tecUsername.text,
+                                password: tecPassword.text)
                           },
                       child: Text(
                         "login",
