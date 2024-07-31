@@ -29,7 +29,7 @@ class _SetupPageCourseselectionState extends State<SetupPageCourseselection>
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
-    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    final bottomInset = View.of(context).viewInsets.bottom;
     setState(() {
       isKeyboardVisible = bottomInset > 0.0;
     });

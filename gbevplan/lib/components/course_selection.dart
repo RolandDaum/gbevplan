@@ -21,7 +21,8 @@ class CourseSelection extends StatefulWidget {
   State<CourseSelection> createState() => _CourseSelectionState();
 }
 
-class _CourseSelectionState extends State<CourseSelection> {
+class _CourseSelectionState extends State<CourseSelection>
+    with WidgetsBindingObserver {
   TextEditingController tecKursSelection = TextEditingController();
   Box appdataBox = Hive.box("appdata");
   int jahrgang = 0;
@@ -29,10 +30,13 @@ class _CourseSelectionState extends State<CourseSelection> {
   List<String> nonselectedKurse = [];
   List<String> selectedKurse = [];
   FocusNode dropdownFocusNode = FocusNode();
+  double bottomInsetD1 = -1;
+  double bottomInsetD2 = -1;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     jahrgang = appdataBox.get("jahrgang");
     if (!(jahrgang >= 5)) {
@@ -63,24 +67,53 @@ class _CourseSelectionState extends State<CourseSelection> {
     }
   }
 
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+
+    // Detects the bottom inset delta value to determine if the keyboard is either opening (+ delta) or closing (- delta) in order to unfocus the DropdownMenu so it properly disposes
+    final bottomInset = View.of(context).viewInsets.bottom;
+
+    if (bottomInsetD1 == -1) {
+      bottomInsetD1 = bottomInset;
+    } else {
+      bottomInsetD2 = bottomInset;
+      double deltaBottomInset = bottomInsetD2 - bottomInsetD1;
+      if (deltaBottomInset < 0) {
+        dropdownFocusNode.unfocus();
+      }
+      bottomInsetD1 = bottomInsetD2;
+      bottomInsetD2 = -1;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CourseSelection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    calcNonSelectedKurse();
+  }
+
   void calcNonSelectedKurse() {
     selectedKurse = [];
     if (widget.selectedKurse.isEmpty) {
-      selectedKurse = appdataBox.get("selectedKurse").cast<String>();
+      selectedKurse.addAll(appdataBox.get("selectedKurse").cast<String>());
     } else {
-      selectedKurse = widget.selectedKurse;
+      selectedKurse.addAll(widget.selectedKurse);
     }
     nonselectedKurse = [];
-    nonselectedKurse = allekurse;
+    nonselectedKurse.addAll(allekurse);
     for (var kurs in selectedKurse) {
-      nonselectedKurse.remove(kurs);
+      setState(() {
+        nonselectedKurse.remove(kurs);
+      });
     }
-    setState(() {});
+    appdataBox.put("selectedKurse", selectedKurse);
   }
 
   @override
   void dispose() {
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
 
     tecKursSelection.dispose();
 
@@ -92,38 +125,35 @@ class _CourseSelectionState extends State<CourseSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return TapRegion(
-      onTapOutside: (value) {
-        // TODO: Not optimal -> unfocusing on dropdown list selection -> but works, so the DropdownMenu is getting disposed because for that it has to be unfocused
-        dropdownFocusNode.unfocus();
+    return DropdownMenu(
+      focusNode: dropdownFocusNode,
+      dropdownMenuEntries:
+          nonselectedKurse.map<DropdownMenuEntry<String>>((String value) {
+        return DropdownMenuEntry<String>(
+          value: value,
+          label: value,
+        );
+      }).toList(),
+      width: 250,
+      menuHeight: 200,
+      controller: tecKursSelection,
+      label: const Text("Kurse"),
+      enableSearch: true,
+      enableFilter: true,
+      requestFocusOnTap: true,
+      onSelected: (value) {
+        setState(() {
+          if (value == null) {
+            return;
+          }
+          nonselectedKurse.remove(value);
+          selectedKurse.add(value);
+          if (widget.onSelectionChange != null) {
+            widget.onSelectionChange!(selectedKurse);
+          }
+          tecKursSelection.text = "";
+        });
       },
-      child: DropdownMenu(
-        focusNode: dropdownFocusNode,
-        dropdownMenuEntries:
-            nonselectedKurse.map<DropdownMenuEntry<String>>((String value) {
-          return DropdownMenuEntry<String>(
-            value: value,
-            label: value,
-          );
-        }).toList(),
-        width: 250,
-        menuHeight: 200,
-        controller: tecKursSelection,
-        label: const Text("Kurse"),
-        enableSearch: true,
-        enableFilter: true,
-        requestFocusOnTap: true,
-        onSelected: (value) {
-          setState(() {
-            nonselectedKurse.remove(value);
-            selectedKurse.add(value!);
-            if (widget.onSelectionChange != null) {
-              widget.onSelectionChange!(selectedKurse);
-            }
-            tecKursSelection.text = "";
-          });
-        },
-      ),
     );
   }
 }

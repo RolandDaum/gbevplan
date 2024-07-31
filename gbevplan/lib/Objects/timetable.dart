@@ -17,7 +17,7 @@ class Timetable {
   Timetable({required this.timetable});
 
   /// Creates a new timetable based on the user selected courses and the in the firestore saved global timetable
-  static createTimetable() async {
+  static Future<void> createTimetable() async {
     Box appdataBox = Hive.box("appdata");
     int jahrgang = appdataBox.get("jahrgang");
     List<String> selectedCourses =
@@ -82,6 +82,7 @@ class Timetable {
             .colorScheme
             .onPrimaryContainer,
       );
+      return;
     });
   }
 

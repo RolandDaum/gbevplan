@@ -78,7 +78,7 @@ class _SetupStartScreenState extends State<SetupStartScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
               child: FilledButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_currentpage != setuppages.length - 1) {
                       _controller.animateToPage(_controller.page!.toInt() + 1,
                           duration: const Duration(milliseconds: 500),
@@ -115,11 +115,10 @@ class _SetupStartScreenState extends State<SetupStartScreen> {
                                     ),
                                   ),
                                 )); // TODO Proper save data method
-                        Timetable.createTimetable().then((value) {
-                          appdataBox.put("initBoot", false);
-                          Navigator.pop(context);
-                          Navigator.pushReplacementNamed(context, "/home");
-                        });
+                        await Timetable.createTimetable();
+                        appdataBox.put("initBoot", false);
+                        Navigator.pop(context);
+                        Navigator.pushReplacementNamed(context, "/home");
                       } else {
                         Fluttertoast.showToast(
                           msg: "kein Jahrgang ausgewählt",

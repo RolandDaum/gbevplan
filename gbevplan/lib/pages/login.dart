@@ -63,8 +63,8 @@ class _page_loginState extends State<page_login> {
         .ref('/credentials/username')
         .once()
         .then((DatabaseEvent event) {
-      String _username = event.snapshot.value as String;
-      if (_username != username) {
+      String fbUsername = event.snapshot.value as String;
+      if (fbUsername != username) {
         valid = false;
       }
     });
@@ -72,8 +72,8 @@ class _page_loginState extends State<page_login> {
         .ref('/credentials/password')
         .once()
         .then((DatabaseEvent event) {
-      String _password = event.snapshot.value as String;
-      if (_password != password) {
+      String fbPassword = event.snapshot.value as String;
+      if (fbPassword != password) {
         valid = false;
       }
     });
