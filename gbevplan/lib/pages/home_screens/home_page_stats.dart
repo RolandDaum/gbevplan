@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gbevplan/tmp.dart';
 // import 'package:gbevplan/tmp.dart';
 // import 'package:lottie/lottie.dart';
 
@@ -42,6 +43,11 @@ class _HomePageStatsState extends State<HomePageStats> {
               "{ comming soon }", // Change to school stats e.g. how many lessons are left this day/week/month/year etc.
               style: Theme.of(context).textTheme.bodyMedium,
             ),
+            // FilledButton(
+            //     onPressed: () {
+            //       transfareData();
+            //     },
+            //     child: const Text("Transfare Data"))
           ],
         ),
       ),

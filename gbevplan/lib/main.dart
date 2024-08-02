@@ -148,7 +148,7 @@ void main() async {
     Hive.box("appdata")
         .put("newest_appversion", event.snapshot.value as String);
   });
-  _callOGTTLrefresh();
+  // _callOGTTLrefresh();
   // RUN MAIN APP
   runApp(const MainGBEVplan());
 }
@@ -181,24 +181,24 @@ appInit() async {
   appdataBOX.put("seedcolor_blue", 153);
 }
 
-void _callOGTTLrefresh() async {
-  int timestamp = 0;
-  await FirebaseDatabase.instance.ref("/URL/0/timestamp").once().then((value) =>
-      {
-        value.snapshot.value != null
-            ? timestamp = value.snapshot.value as int
-            : ()
-      });
-  if (timestamp <= DateTime.now().millisecondsSinceEpoch - (5 * 60 * 1000)) {
-    FirebaseFunctions.instanceFor(region: 'us-central1')
-        .httpsCallable('UUIDFunctionOnCall')
-        .call()
-        .then((value) {
-      // print(
-      //     " -  C A L L E D  - "); // triggers when the functions completed to run
-    });
-  }
-}
+// void _callOGTTLrefresh() async {
+//   int timestamp = 0;
+//   await FirebaseDatabase.instance.ref("/URL/0/timestamp").once().then((value) =>
+//       {
+//         value.snapshot.value != null
+//             ? timestamp = value.snapshot.value as int
+//             : ()
+//       });
+//   if (timestamp <= DateTime.now().millisecondsSinceEpoch - (5 * 60 * 1000)) {
+//     FirebaseFunctions.instanceFor(region: 'us-central1')
+//         .httpsCallable('UUIDFunctionOnCall')
+//         .call()
+//         .then((value) {
+//       // print(
+//       //     " -  C A L L E D  - "); // triggers when the functions completed to run
+//     });
+//   }
+// }
 
 class MainGBEVplan extends StatefulWidget {
   const MainGBEVplan({super.key});

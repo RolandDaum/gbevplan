@@ -55,12 +55,16 @@ class _CourseSelectionState extends State<CourseSelection>
           .then((DatabaseEvent event) {
         final db = FirebaseFirestore.instance;
         db.databaseId = "database";
+        print(jahrgang);
+        print(event.snapshot.value as String);
         db
             .collection(event.snapshot.value as String)
             .doc(jahrgang.toString())
             .get()
             .then((value) {
+          print(value.data()!["all_courses"].toString());
           allekurse = value.data()!["all_courses"].cast<String>();
+
           calcNonSelectedKurse();
         });
       });
